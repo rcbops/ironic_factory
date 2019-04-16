@@ -62,7 +62,7 @@ If you do not want this functionality, you will need to edit the respective temp
   "type": "vagrant-cloud",
   "box_tag": "{{ user `box_tag` }}",
   "access_token": "{{ user `vagrant_cloud_token` }}",
-  "version": "{{ timestamp }}"
+  "version": "{{ isotime \"2006-01-02\" }}"
 }
 ```
 

@@ -1,7 +1,7 @@
 {
   "auto_build": "True",
   "box_name": "xenial64",
-  "box_tag": "mrlesmithjr/xenial64",
+  "box_tag": "bunchc/xenial64",
   "description": "Ubuntu 16.04 (Xenial Xerus) Server",
   "private": "False",
   "short_description": "Ubuntu Xenial Server"

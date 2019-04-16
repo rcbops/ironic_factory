@@ -1,7 +1,7 @@
 {
   "auto_build": "False",
   "box_name": "zesty64",
-  "box_tag": "mrlesmithjr/zesty64",
+  "box_tag": "bunchc/zesty64",
   "description": "Ubuntu 17.04 (Zesty Zapus) Server",
   "private": "False",
   "short_description": "Ubuntu Zesty Server"

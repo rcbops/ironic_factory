@@ -51,13 +51,13 @@
       "iso_checksum": "{{ user `iso_checksum` }}",
       "iso_url": "{{ user `iso_url` }}",
       "memory": "{{ user `vm_memory` }}",
-      "output_directory": "output-{{ user `vm_name` }}-{{ build_type }}-{{ timestamp }}",
+      "output_directory": "output-{{ user `vm_name` }}-{{ build_type }}-{{ isotime \"2006-01-02\" }}",
       "shutdown_command": "echo '/sbin/halt -h -p' > shutdown.sh; echo 'packer'|sudo -S bash 'shutdown.sh'",
       "ssh_password": "{{ user `vm_ssh_password` }}",
       "ssh_username": "{{ user `vm_ssh_username` }}",
       "ssh_wait_timeout": "60m",
       "type": "virtualbox-iso",
-      "vm_name": "{{ user `vm_name` }}-{{ timestamp }}"
+      "vm_name": "{{ user `vm_name` }}-{{ isotime \"2006-01-02\" }}"
     },
     {
       "boot_command": [
@@ -94,13 +94,13 @@
       "iso_checksum": "{{ user `iso_checksum` }}",
       "iso_url": "{{ user `iso_url` }}",
       "memory": "{{ user `vm_memory` }}",
-      "output_directory": "output-{{ user `vm_name` }}-{{ build_type }}-{{ timestamp }}",
+      "output_directory": "output-{{ user `vm_name` }}-{{ build_type }}-{{ isotime \"2006-01-02\" }}",
       "shutdown_command": "echo '/sbin/halt -h -p' > shutdown.sh; echo 'packer'|sudo -S bash 'shutdown.sh'",
       "ssh_password": "{{ user `vm_ssh_password` }}",
       "ssh_username": "{{ user `vm_ssh_username` }}",
       "ssh_wait_timeout": "60m",
       "type": "vmware-iso",
-      "vm_name": "{{ user `vm_name` }}-{{ timestamp }}"
+      "vm_name": "{{ user `vm_name` }}-{{ isotime \"2006-01-02\" }}"
     }
   ],
   "provisioners": [
@@ -120,14 +120,14 @@
     [
       {
         "compression_level": "{{ user `compression_level` }}",
-        "output": "{{ user `vm_name` }}-{{.Provider}}-{{ timestamp }}.box",
+        "output": "{{ user `vm_name` }}-{{.Provider}}-{{ isotime \"2006-01-02\" }}.box",
         "type": "vagrant"
       },
       {
         "type": "vagrant-cloud",
         "box_tag": "{{ user `box_tag` }}",
         "access_token": "{{ user `vagrant_cloud_token` }}",
-        "version": "{{ timestamp }}"
+        "version": "{{ isotime \"2006-01-02\" }}"
       },
       {
         "type": "manifest",

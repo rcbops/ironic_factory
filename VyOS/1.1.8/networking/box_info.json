@@ -1,7 +1,7 @@
 {
-  "auto_build": "True",
+  "auto_build": "False",
   "box_name": "vyos118",
-  "box_tag": "mrlesmithjr/vyos118",
+  "box_tag": "bunchc/vyos118",
   "description": "VyOS 1.1.8",
   "private": "False",
   "short_description": "VyOS 1.1.8"

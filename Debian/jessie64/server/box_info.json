@@ -1,7 +1,7 @@
 {
   "auto_build": "True",
   "box_name": "jessie64",
-  "box_tag": "mrlesmithjr/jessie64",
+  "box_tag": "bunchc/jessie64",
   "description": "Debian Jessie",
   "private": "False",
   "short_description": "Debian Jessie"

@@ -1,7 +1,7 @@
 {
   "auto_build": "True",
   "box_name": "wheezy64",
-  "box_tag": "mrlesmithjr/wheezy64",
+  "box_tag": "bunchc/wheezy64",
   "description": "Debian Wheezy",
   "private": "False",
   "short_description": "Debian Wheezy"

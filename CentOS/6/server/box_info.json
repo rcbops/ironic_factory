@@ -1,7 +1,7 @@
 {
   "auto_build": "True",
   "box_name": "centos6",
-  "box_tag": "mrlesmithjr/centos6",
+  "box_tag": "bunchc/centos6",
   "description": "CentOS 6",
   "private": "False",
   "short_description": "CentOS 6"

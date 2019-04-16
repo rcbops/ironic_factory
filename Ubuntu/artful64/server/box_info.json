@@ -1,7 +1,7 @@
 {
   "auto_build": "True",
   "box_name": "artful64",
-  "box_tag": "mrlesmithjr/artful64",
+  "box_tag": "bunchc/artful64",
   "description": "Ubuntu 17.10 (Artful Aardvark) Server",
   "private": "False",
   "short_description": "Ubuntu Artful Server"

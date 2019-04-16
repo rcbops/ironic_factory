@@ -51,6 +51,17 @@ if [ -f /etc/udev/rules.d/70-persistent-net.rules ]; then
     sudo rm /etc/udev/rules.d/70-persistent-net.rules
 fi
 
+#add dhcp default for all interfaces with systemd-networkd
+if [ -d /etc/systemd/network/ ]; then
+    echo "[Match]
+Name=en*
+
+[Network]
+DHCP=ipv4" | sudo tee /etc/systemd/network/99-dhcp-default.network
+
+sudo systemctl enable systemd-networkd
+fi
+
 #cleanup /tmp directories
 sudo rm -rf /tmp/*
 sudo rm -rf /var/tmp/*

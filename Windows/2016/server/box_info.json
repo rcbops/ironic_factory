@@ -1,7 +1,7 @@
 {
-  "auto_build": "True",
+  "auto_build": "False",
   "box_name": "windows2016",
-  "box_tag": "mrlesmithjr/windows2016",
+  "box_tag": "bunchc/windows2016",
   "description": "Windows 2016 Server",
   "private": "False",
   "short_description": "Windows 2016 Server"

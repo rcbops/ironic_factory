@@ -1,7 +1,7 @@
 {
   "auto_build": "True",
   "box_name": "fedora26",
-  "box_tag": "mrlesmithjr/fedora26",
+  "box_tag": "bunchc/fedora26",
   "description": "Fedora 26",
   "private": "False",
   "short_description": "Fedora 26"

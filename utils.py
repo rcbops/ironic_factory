@@ -13,9 +13,9 @@ import sys
 import requests
 import git
 
-__author__ = "Larry Smith Jr."
-__email__ = "mrlesmithjr@gmail.com"
-__maintainer__ = "Larry Smith Jr."
+__author__ = "Cody Bunch"
+__email__ = "bunchc@gmail.com"
+__maintainer__ = "Cody Bunch"
 __status__ = "Development"
 # http://everythingshouldbevirtual.com
 # @mrlesmithjr
@@ -23,7 +23,7 @@ __status__ = "Development"
 logging.basicConfig(level=logging.INFO)
 
 API_URL = 'https://app.vagrantup.com/api/v1/'
-BUILD_OLDER_THAN_DAYS = 30
+BUILD_OLDER_THAN_DAYS = 3
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
@@ -59,7 +59,7 @@ def parse_args():
         "action", help="Define action to take.", choices=[
             'build_all', 'change_controller', 'cleanup_builds',
             'commit_manifests', 'get_boxes', 'rename_templates',
-            'repo_info', 'upload_boxes', 'view_manifests'])
+            'repo_info', 'upload_boxes', 'view_manifests', 'create_all'])
     parser.add_argument('--controller',
                         help='Define hard drive controller type',
                         choices=['ide', 'sata', 'scsi'])
@@ -94,6 +94,8 @@ def decide_action(args, username, vagrant_cloud_token):
         print(json.dumps(repo_facts, indent=4))
     elif args.action == 'upload_boxes':
         upload_boxes(vagrant_cloud_token)
+    elif args.action == "create_all":
+        create_all(username, vagrant_cloud_token)
     elif args.action == 'view_manifests':
         view_manifests()
 
@@ -216,6 +218,27 @@ def create_box(box_info, username, vagrant_cloud_token):
     else:
         print(response.status_code)
     print(json_response)
+
+
+def create_all(username, vagrant_cloud_token):
+    """Looks box_info.json  in each directory and then creates it."""
+    print('Building all images.')
+    for root, _dirs, files in os.walk(SCRIPT_DIR):
+        if 'build.sh' in files:
+            with open(os.path.join(root, 'box_info.json'),
+                      'r') as box_info_file:
+                box_info = json.load(box_info_file)
+                auto_build = box_info['auto_build']
+                if auto_build is not None:
+                    if auto_build.lower() == 'true':
+                        auto_build = True
+                    else:
+                        auto_build = False
+                else:
+                    auto_build = True
+                build_image = get_box(box_info, username, vagrant_cloud_token)
+                if auto_build:
+                    get_box(box_info, username, vagrant_cloud_token)
 
 
 def update_box(box_info, username, vagrant_cloud_token):

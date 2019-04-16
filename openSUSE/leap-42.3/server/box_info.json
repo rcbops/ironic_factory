@@ -1,7 +1,7 @@
 {
-  "auto_build": "True",
+  "auto_build": "False",
   "box_name": "opensuse-leap423",
-  "box_tag": "mrlesmithjr/opensuse-leap423",
+  "box_tag": "bunchc/opensuse-leap423",
   "description": "openSUSE Leap 42.3",
   "private": "False",
   "short_description": "openSUSE Leap 42.3"
