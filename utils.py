@@ -289,12 +289,12 @@ def update_templates():
             with open(os.path.join(root, 'template.json'),
                         'r') as template:
                 data = json.load(template)
-                print(data)
                 checksum = data['iso_checksum']
                 checksum_url = data['iso_checksum_url']
                 url = data['iso_url']
                 local_filename = os.path.basename(urlparse(url).path)
                 remote_checksums = requests.get(checksum_url)
+                update = False
                 if remote_checksums.status_code != 200:
                     print("Invalid checksum url: %s" %(checksum_url))
                 else:
@@ -305,18 +305,21 @@ def update_templates():
                         print("New filename: %s" %(remote_filename[0]))
                         url = url.replace(local_filename, remote_filename[0])
                         print("New URL: %s" %(url))
-                    # Check if the local checksum matches the remote checksum
-                    
+                        update = True
+
+                    # Check if the local checksum matches the remote checksum                   
                     if checksum not in remote_checksums.text:
                         print("Checksum mismatch")
                         checksum = filter(lambda x: remote_filename[0] in x, remote_checksums.iter_lines())[0].split()[0]
                         print("New checksum: %s" %(checksum))
-                        
-            with open(os.path.join(root, 'template.json'),
-                        'w') as template_update:
-                data['iso_checksum'] = checksum
-                data['iso_url'] = url
-                json.dump(data, template_update)
+                        update = True
+
+            if update:
+                with open(os.path.join(root, 'template.json'),
+                            'w') as template_update:
+                    data['iso_checksum'] = checksum
+                    data['iso_url'] = url
+                    json.dump(data, template_update)
 
 def update_box(box_info, username, vagrant_cloud_token):
     """Update box info using Vagrant Cloud API."""
