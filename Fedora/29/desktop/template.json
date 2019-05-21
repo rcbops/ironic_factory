@@ -3,5 +3,6 @@
   "iso_checksum": "aa7fb0e6e5b71774ebdaab0dae76bdd9246a5bc7aedc28b7f1103aaaf9750654",
   "iso_checksum_type": "sha256",
   "iso_url": "http://download.fedoraproject.org/pub/fedora/linux/releases/29/Server/x86_64/iso/Fedora-Server-netinst-x86_64-29-1.2.iso",
+  "iso_checksum_url": "http://mirror.cs.princeton.edu/pub/mirrors/fedora/linux//releases/29/Server/x86_64/iso/Fedora-Server-29-1.2-x86_64-CHECKSUM",
   "vm_name": "fedora29-desktop-packer-template"
 }
