@@ -1,8 +1,0 @@
-{
-  "auto_build": "False",
-  "box_name": "zesty64-desktop",
-  "box_tag": "bunchc/zesty64-desktop",
-  "description": "Ubuntu 17.04 (Zesty Zapus) Desktop",
-  "private": "False",
-  "short_description": "Ubuntu Zesty Desktop"
-}

@@ -1,8 +1,0 @@
-{
-  "auto_build": "False",
-  "box_name": "windows2008r2",
-  "box_tag": "bunchc/windows2008r2",
-  "description": "Windows 2008 R2 Server",
-  "private": "False",
-  "short_description": "Windows 2008 R2 Server"
-}

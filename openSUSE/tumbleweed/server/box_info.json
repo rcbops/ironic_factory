@@ -1,8 +1,0 @@
-{
-  "auto_build": "False",
-  "box_name": "opensuse-tumbleweed",
-  "box_tag": "bunchc/opensuse-tumbleweed",
-  "description": "openSUSE Tumbleweed",
-  "private": "False",
-  "short_description": "openSUSE Tumbleweed"
-}
