@@ -319,7 +319,7 @@ def update_templates():
                             'w') as template_update:
                     data['iso_checksum'] = checksum
                     data['iso_url'] = url
-                    json.dump(data, template_update)
+                    json.dump(data, template_update, indent = 4)
 
 def update_box(box_info, username, vagrant_cloud_token):
     """Update box info using Vagrant Cloud API."""
