@@ -1,8 +1,0 @@
-{
-  "auto_build": "True",
-  "box_name": "fedora28-desktop",
-  "box_tag": "bunchc/fedora28-desktop",
-  "description": "Fedora 28 Desktop",
-  "private": "False",
-  "short_description": "Fedora 28 Desktop"
-}
