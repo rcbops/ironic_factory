@@ -65,10 +65,7 @@
       "ssh_username": "{{ user `vm_ssh_username` }}",
       "ssh_wait_timeout": "15m",
       "type": "virtualbox-iso",
-      "vm_name": "{{ user `vm_name` }}-{{ isotime \"2006-01-02\" }}",
-      "vnc_bind_address": "0.0.0.0",
-      "vnc_port_min": "5900",
-      "vnc_port_max": "5901"
+      "vm_name": "{{ user `vm_name` }}-{{ isotime \"2006-01-02\" }}"
     },
     {
       "boot_command": [
@@ -97,6 +94,7 @@
         "ethernet0.pciSlotNumber": "32"
       },
       "vmx_remove_ethernet_interfaces": true,
+      "vnc_disable_password": true,
       "vnc_bind_address": "0.0.0.0",
       "vnc_port_min": "5900",
       "vnc_port_max": "5901"

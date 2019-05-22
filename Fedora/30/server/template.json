@@ -1,8 +1,0 @@
-{
-  "boot_command_prefix": "inst.text inst.ks", 
-  "iso_checksum": "#", 
-  "iso_checksum_type": "sha256", 
-  "iso_checksum_url": "http://mirror.cs.princeton.edu/pub/mirrors/fedora/linux//releases/30/Server/x86_64/iso/Fedora-Server-30-1.2-x86_64-CHECKSUM", 
-  "iso_url": "http://download.fedoraproject.org/pub/fedora/linux/releases/30/Server/x86_64/iso/Fedora-Server-netinst-x86_64-30-1.2.iso", 
-  "vm_name": "fedora30-server-packer-template"
-}
