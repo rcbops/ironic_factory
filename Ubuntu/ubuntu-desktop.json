@@ -10,7 +10,7 @@
     "vagrant_cloud_username": "",
     "vm_disk_adapter_type": "scsi",
     "vm_disk_size": "36864",
-    "vm_memory": "512",
+    "vm_memory": "8196",
     "vm_name": "",
     "vm_ssh_password": "vagrant",
     "vm_ssh_username": "vagrant",
@@ -44,8 +44,9 @@
       ],
       "cpus": "{{ user `vm_vcpu` }}",
       "disk_interface": "virtio-{{ user `vm_disk_adapter_type` }}",
+      "disk_cache": "unsafe",
       "disk_size": "{{ user `vm_disk_size` }}",
-      "format": "qcow2",
+      "format": "raw",
       "headless": true,
       "http_directory": "http",
       "iso_checksum_type": "{{ user `iso_checksum_type` }}",
@@ -56,12 +57,15 @@
       "shutdown_command": "echo '/sbin/halt -h -p' > shutdown.sh; echo 'packer'|sudo -S bash 'shutdown.sh'",
       "ssh_password": "{{ user `vm_ssh_password` }}",
       "ssh_username": "{{ user `vm_ssh_username` }}",
-      "ssh_wait_timeout": "60m",
+      "ssh_wait_timeout": "15m",
       "vnc_bind_address": "0.0.0.0",
       "vnc_port_min": "5900",
       "vnc_port_max": "5900",
       "type": "qemu",
-      "vm_name": "{{ user `vm_name` }}-{{ isotime \"2006-01-02\" }}"
+      "vm_name": "{{ user `vm_name` }}-{{ isotime \"2006-01-02\" }}",
+      "vnc_bind_address": "0.0.0.0",
+      "vnc_port_min": "5900",
+      "vnc_port_max": "5901"
     },
     {
       "boot_command": [
@@ -101,9 +105,12 @@
       "shutdown_command": "echo '/sbin/halt -h -p' > shutdown.sh; echo 'packer'|sudo -S bash 'shutdown.sh'",
       "ssh_password": "{{ user `vm_ssh_password` }}",
       "ssh_username": "{{ user `vm_ssh_username` }}",
-      "ssh_wait_timeout": "60m",
+      "ssh_wait_timeout": "15m",
       "type": "virtualbox-iso",
-      "vm_name": "{{ user `vm_name` }}-{{ isotime \"2006-01-02\" }}"
+      "vm_name": "{{ user `vm_name` }}-{{ isotime \"2006-01-02\" }}",
+      "vnc_bind_address": "0.0.0.0",
+      "vnc_port_min": "5900",
+      "vnc_port_max": "5901"
     },
     {
       "boot_command": [
@@ -144,13 +151,16 @@
       "shutdown_command": "echo '/sbin/halt -h -p' > shutdown.sh; echo 'packer'|sudo -S bash 'shutdown.sh'",
       "ssh_password": "{{ user `vm_ssh_password` }}",
       "ssh_username": "{{ user `vm_ssh_username` }}",
-      "ssh_wait_timeout": "60m",
+      "ssh_wait_timeout": "15m",
       "type": "vmware-iso",
       "vm_name": "{{ user `vm_name` }}-{{ isotime \"2006-01-02\" }}",
       "vmx_data": {
         "ethernet0.pciSlotNumber": "32"
       },
-      "vmx_remove_ethernet_interfaces": true
+      "vmx_remove_ethernet_interfaces": true,
+      "vnc_bind_address": "0.0.0.0",
+      "vnc_port_min": "5900",
+      "vnc_port_max": "5901"
     }
   ],
   "provisioners": [
@@ -173,6 +183,10 @@
         "compression_level": "{{ user `compression_level` }}",
         "output": "{{ user `vm_name` }}-{{.Provider}}-{{ isotime \"2006-01-02\" }}.box",
         "type": "vagrant"
+      },
+      {
+	"checksum_types": ["md5", "sha1", "sha256", "sha512"],
+        "type": "checksum"
       },
       {
         "type": "vagrant-cloud",

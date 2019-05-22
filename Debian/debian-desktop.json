@@ -10,7 +10,7 @@
     "vagrant_cloud_username": "",
     "vm_disk_adapter_type": "scsi",
     "vm_disk_size": "36864",
-    "vm_memory": "512",
+    "vm_memory": "8196",
     "vm_name": "",
     "vm_ssh_password": "vagrant",
     "vm_ssh_username": "vagrant",
@@ -38,8 +38,9 @@
       ],
       "cpus": "{{ user `vm_vcpu` }}",
       "disk_interface": "virtio",
+      "disk_cache": "unsafe",
       "disk_size": "{{ user `vm_disk_size` }}",
-      "format": "qcow2",
+      "format": "raw",
       "headless": true,
       "http_directory": "http",
       "iso_checksum_type": "{{ user `iso_checksum_type` }}",
@@ -50,7 +51,7 @@
       "shutdown_command": "echo '/sbin/halt -h -p' > shutdown.sh; echo 'packer'|sudo -S bash 'shutdown.sh'",
       "ssh_password": "{{ user `vm_ssh_password` }}",
       "ssh_username": "{{ user `vm_ssh_username` }}",
-      "ssh_wait_timeout": "60m",
+      "ssh_wait_timeout": "15m",
       "type": "qemu",
       "vm_name": "{{ user `vm_name` }}-{{isotime \"2006-01-02\"}}"
     },
@@ -86,7 +87,7 @@
       "shutdown_command": "echo '/sbin/halt -h -p' > shutdown.sh; echo 'packer'|sudo -S bash 'shutdown.sh'",
       "ssh_password": "{{ user `vm_ssh_password` }}",
       "ssh_username": "{{ user `vm_ssh_username` }}",
-      "ssh_wait_timeout": "60m",
+      "ssh_wait_timeout": "15m",
       "type": "virtualbox-iso",
       "vm_name": "{{ user `vm_name` }}-{{isotime \"2006-01-02\"}}"
     },
@@ -123,7 +124,7 @@
       "shutdown_command": "echo '/sbin/halt -h -p' > shutdown.sh; echo 'packer'|sudo -S bash 'shutdown.sh'",
       "ssh_password": "{{ user `vm_ssh_password` }}",
       "ssh_username": "{{ user `vm_ssh_username` }}",
-      "ssh_wait_timeout": "60m",
+      "ssh_wait_timeout": "15m",
       "type": "vmware-iso",
       "vm_name": "{{ user `vm_name` }}-{{ isotime \"2006-01-02\" }}",
       "vmx_data": {
@@ -158,6 +159,10 @@
         "box_tag": "{{ user `box_tag` }}",
         "access_token": "{{ user `vagrant_cloud_token` }}",
         "version": "{{ isotime \"2006-01-02\" }}"
+      },
+      {
+	"checksum_types": ["md5", "sha1", "sha256", "sha512"],
+        "type": "checksum"
       },
       {
         "type": "manifest",

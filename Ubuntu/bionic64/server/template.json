@@ -5,7 +5,4 @@
   "iso_url": "http://cdimage.ubuntu.com/releases/18.04/release/ubuntu-18.04.2-server-amd64.iso",
   "iso_checksum_url": "http://cdimage.ubuntu.com/releases/18.04/release/SHA256SUMS",
   "vm_name": "bionic64-server-packer-template",
-  "vm_disk_size": "102400",
-  "vm_memory": "16384",
-  "vm_vcpu": "4"
 }

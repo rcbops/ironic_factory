@@ -10,7 +10,7 @@
     "vagrant_cloud_username": "",
     "vm_disk_adapter_type": "scsi",
     "vm_disk_size": "36864",
-    "vm_memory": "512",
+    "vm_memory": "8196",
     "vm_name": "",
     "vm_ssh_password": "vagrant",
     "vm_ssh_username": "vagrant",
@@ -55,7 +55,7 @@
       "shutdown_command": "echo '/sbin/halt -h -p' > shutdown.sh; echo 'packer'|sudo -S bash 'shutdown.sh'",
       "ssh_password": "{{ user `vm_ssh_password` }}",
       "ssh_username": "{{ user `vm_ssh_username` }}",
-      "ssh_wait_timeout": "60m",
+      "ssh_wait_timeout": "15m",
       "type": "virtualbox-iso",
       "vm_name": "{{ user `vm_name` }}-{{ isotime \"2006-01-02\" }}"
     },
@@ -98,7 +98,7 @@
       "shutdown_command": "echo '/sbin/halt -h -p' > shutdown.sh; echo 'packer'|sudo -S bash 'shutdown.sh'",
       "ssh_password": "{{ user `vm_ssh_password` }}",
       "ssh_username": "{{ user `vm_ssh_username` }}",
-      "ssh_wait_timeout": "60m",
+      "ssh_wait_timeout": "15m",
       "type": "vmware-iso",
       "vm_name": "{{ user `vm_name` }}-{{ isotime \"2006-01-02\" }}"
     }
@@ -122,6 +122,10 @@
         "compression_level": "{{ user `compression_level` }}",
         "output": "{{ user `vm_name` }}-{{.Provider}}-{{ isotime \"2006-01-02\" }}.box",
         "type": "vagrant"
+      },
+      {
+	"checksum_types": ["md5", "sha1", "sha256", "sha512"],
+        "type": "checksum"
       },
       {
         "type": "vagrant-cloud",

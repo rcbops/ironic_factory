@@ -165,7 +165,8 @@ def build_all(username, vagrant_cloud_token):
                     process = subprocess.Popen(['./build.sh'])
                     process.wait()
                     if process.returncode != 0:
-                        sys.exit(1)
+                        print('Build of {0} failed'.format(root))
+#                        sys.exit(1)
                     os.chdir(SCRIPT_DIR)
 
 
@@ -306,6 +307,8 @@ def update_templates():
                         url = url.replace(local_filename, remote_filename[0])
                         print("New URL: %s" %(url))
                         update = True
+                    else:
+                        remote_filename = local_filename
 
                     # Check if the local checksum matches the remote checksum                   
                     if checksum not in remote_checksums.text:
