@@ -1,8 +1,0 @@
-{
-  "auto_build": "True",
-  "box_name": "fedora29-desktop",
-  "box_tag": "bunchc/fedora29-desktop",
-  "description": "Fedora 29 Desktop",
-  "private": "False",
-  "short_description": "Fedora 29 Desktop"
-}
