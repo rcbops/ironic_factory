@@ -221,10 +221,6 @@
         "type": "vagrant"
       },
       {
-	"checksum_types": ["md5", "sha1", "sha256", "sha512"],
-        "type": "checksum"
-      },
-      {
         "type": "vagrant-cloud",
         "box_tag": "{{ user `box_tag` }}",
         "access_token": "{{ user `vagrant_cloud_token` }}",
