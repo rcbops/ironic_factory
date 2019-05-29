@@ -46,7 +46,7 @@
       "disk_interface": "virtio-{{ user `vm_disk_adapter_type` }}",
       "disk_cache": "unsafe",
       "disk_size": "{{ user `vm_disk_size` }}",
-      "format": "raw",
+      "format": "qcow2",
       "headless": true,
       "http_directory": "http",
       "iso_checksum_type": "{{ user `iso_checksum_type` }}",
@@ -60,9 +60,7 @@
       "ssh_wait_timeout": "15m",
       "type": "qemu",
       "vm_name": "{{ user `vm_name` }}-{{ isotime \"2006-01-02\" }}",
-      "vnc_bind_address": "0.0.0.0",
-      "vnc_port_min": "5900",
-      "vnc_port_max": "5901"
+      "vnc_bind_address": "0.0.0.0"
     },
     {
       "boot_command": [
@@ -153,9 +151,7 @@
       },
       "vmx_remove_ethernet_interfaces": true,
       "vnc_disable_password": true,
-      "vnc_bind_address": "0.0.0.0",
-      "vnc_port_min": "5900",
-      "vnc_port_max": "5901"
+      "vnc_bind_address": "0.0.0.0"
     }
   ],
   "provisioners": [

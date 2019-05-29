@@ -305,7 +305,34 @@
       "artifact_id": "",
       "packer_run_uuid": "f21c6aa9-e0e6-167a-8f1d-3396e4cd6039",
       "custom_data": null
+    },
+    {
+      "name": "qemu",
+      "builder_type": "qemu",
+      "build_time": 1559083960,
+      "files": null,
+      "artifact_id": "",
+      "packer_run_uuid": "dcb40e2e-8b96-5049-ae4d-a5b88e9c501f",
+      "custom_data": null
+    },
+    {
+      "name": "qemu",
+      "builder_type": "qemu",
+      "build_time": 1559151134,
+      "files": null,
+      "artifact_id": "",
+      "packer_run_uuid": "70df09e7-8103-658d-1176-17efc59b441c",
+      "custom_data": null
+    },
+    {
+      "name": "qemu",
+      "builder_type": "qemu",
+      "build_time": 1559162811,
+      "files": null,
+      "artifact_id": "",
+      "packer_run_uuid": "4c94132d-7631-af8a-d340-9234897fb483",
+      "custom_data": null
     }
   ],
-  "last_run_uuid": "f21c6aa9-e0e6-167a-8f1d-3396e4cd6039"
+  "last_run_uuid": "4c94132d-7631-af8a-d340-9234897fb483"
 }

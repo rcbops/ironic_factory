@@ -125,7 +125,25 @@
       "artifact_id": "",
       "packer_run_uuid": "07613ca7-cb8f-9dd4-6e34-05c39fb81326",
       "custom_data": null
+    },
+    {
+      "name": "qemu",
+      "builder_type": "qemu",
+      "build_time": 1559055935,
+      "files": null,
+      "artifact_id": "",
+      "packer_run_uuid": "3288ec97-0fd8-c543-d480-1f5ec68b2af2",
+      "custom_data": null
+    },
+    {
+      "name": "qemu",
+      "builder_type": "qemu",
+      "build_time": 1559145865,
+      "files": null,
+      "artifact_id": "",
+      "packer_run_uuid": "39f6b6cc-fdde-03c0-e44e-baaa311a3332",
+      "custom_data": null
     }
   ],
-  "last_run_uuid": "07613ca7-cb8f-9dd4-6e34-05c39fb81326"
+  "last_run_uuid": "39f6b6cc-fdde-03c0-e44e-baaa311a3332"
 }

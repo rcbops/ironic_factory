@@ -215,7 +215,79 @@
       "artifact_id": "",
       "packer_run_uuid": "94063457-b563-3e31-9236-29ccb7ad2700",
       "custom_data": null
+    },
+    {
+      "name": "qemu",
+      "builder_type": "qemu",
+      "build_time": 1558646164,
+      "files": null,
+      "artifact_id": "",
+      "packer_run_uuid": "e422fc98-de8b-b85f-9cfd-30f4b5fd07f3",
+      "custom_data": null
+    },
+    {
+      "name": "qemu",
+      "builder_type": "qemu",
+      "build_time": 1558649842,
+      "files": null,
+      "artifact_id": "",
+      "packer_run_uuid": "0d4c9f6b-a47b-1a2a-d8c6-7e7db3fc76de",
+      "custom_data": null
+    },
+    {
+      "name": "qemu",
+      "builder_type": "qemu",
+      "build_time": 1558722248,
+      "files": null,
+      "artifact_id": "",
+      "packer_run_uuid": "ad7801a1-8ff6-73cb-a0bd-59c24ec2fb62",
+      "custom_data": null
+    },
+    {
+      "name": "qemu",
+      "builder_type": "qemu",
+      "build_time": 1559069371,
+      "files": null,
+      "artifact_id": "",
+      "packer_run_uuid": "00eb1d39-d234-f1d8-1b33-d159cb81107d",
+      "custom_data": null
+    },
+    {
+      "name": "qemu",
+      "builder_type": "qemu",
+      "build_time": 1559072743,
+      "files": null,
+      "artifact_id": "",
+      "packer_run_uuid": "e419d07d-b6b0-86ee-2146-14e83a0b7098",
+      "custom_data": null
+    },
+    {
+      "name": "qemu",
+      "builder_type": "qemu",
+      "build_time": 1559082149,
+      "files": null,
+      "artifact_id": "",
+      "packer_run_uuid": "806ab46a-ec24-7086-4c1b-be86f84fcbd6",
+      "custom_data": null
+    },
+    {
+      "name": "qemu",
+      "builder_type": "qemu",
+      "build_time": 1559141253,
+      "files": null,
+      "artifact_id": "",
+      "packer_run_uuid": "555a6b2b-4fd7-790c-6b83-64462b68be24",
+      "custom_data": null
+    },
+    {
+      "name": "qemu",
+      "builder_type": "qemu",
+      "build_time": 1559161277,
+      "files": null,
+      "artifact_id": "",
+      "packer_run_uuid": "1cf30f78-bc89-ab08-61d9-2aa4979707ca",
+      "custom_data": null
     }
   ],
-  "last_run_uuid": "94063457-b563-3e31-9236-29ccb7ad2700"
+  "last_run_uuid": "1cf30f78-bc89-ab08-61d9-2aa4979707ca"
 }

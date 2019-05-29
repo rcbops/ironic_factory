@@ -1,5 +1,5 @@
 {
-  "auto_build": "False",
+  "auto_build": "True",
   "box_name": "stretch64",
   "box_tag": "bunchc/stretch64",
   "description": "Debian Stretch",

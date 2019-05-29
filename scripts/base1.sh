@@ -3,26 +3,18 @@
 set -e
 set -x
 
-# Install pip, and then ironic-python-agent
-#
-# NOTE: This is not actually needed on host-os images. It is left here,
-# however, in case that changes.
-install_ironic-agent(){
+install_pip(){
     # Install pip
     if which wget; then
         wget https://bootstrap.pypa.io/get-pip.py
     elif which curl; then
         curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
     fi
-    sudo python get-pip.py --quiet #--isolated
+    sudo python get-pip.py --quiet --isolated
 
-    # Install requirements
-    sudo pip install --upgrade pip cffi pyOpenSSL setuptools
-    sudo pip install -c "https://opendev.org/openstack/requirements/raw/branch/stable/stein/upper-constraints.txt" \
-        --no-cache-dir -r "https://raw.githubusercontent.com/openstack/ironic-python-agent/stable/stein/requirements.txt"
-    # Now that the requirements have installed, install ironic-python-agent
-    sudo pip install -c "https://opendev.org/openstack/requirements/raw/branch/stable/stein/upper-constraints.txt" \
-        --no-cache-dir ironic-python-agent
+    # Install `ironic-python-agent`
+    sudo pip install --upgrade pip cffi pyOpenSSL
+    sudo pip install ironic-python-agent
 }
 
 # The below is only specific to Fedora 22 as of right now. All other later
@@ -95,6 +87,8 @@ os_family="$(facter osfamily)"
 os_release="$(facter operatingsystemrelease)"
 os_release_major="$(facter operatingsystemrelease | awk -F. '{ print $1 }')"
 
+# Install enough python to get `ironic-python-agent` installed
+
 if [[ $os_family = "Debian" || $os = "Debian" ]]; then
     # We need to cleanup for old repo update issues for hash mismatch
     if [[ $codename = "precise" ]]; then
@@ -105,10 +99,9 @@ if [[ $os_family = "Debian" || $os = "Debian" ]]; then
         sudo apt-get update
         sudo apt-get install -y python-minimal python-dev linux-headers-"$(uname -r)" \
         build-essential zlib1g-dev libssl-dev libreadline-gplv2-dev unzip
+#        install_pip
     fi
-    if [[ $codename != "wheezy" ]] && [[ $codename != "jessie" ]] && [[ $codename != "trusty" ]] && [[ $codename != "precise" ]]; then
-        # Uncomment the following line to install ironic-python-agent
-        #install_ironic-agent
+    if [[ $codename != "wheezy" || $codename != "jessie" ]]; then
         sudo apt-get -y install cloud-init cloud-initramfs-growroot
     fi
 
@@ -138,30 +131,24 @@ if [[ $os_family = "Debian" || $os = "Debian" ]]; then
     elif [[ $os_family = "RedHat" ]]; then
     if [[ $os != "Fedora" ]]; then
         sudo yum -y install python-devel
-        sudo yum -y groupinstall 'Development Tools'
-        sudo yum -y install cloud-init cloud-utils-growpart
-        # Uncomment the following line to install ironic-python-agent
-        #install_ironic-agent
+        install_pip
+        sudo yum -i install cloud-init cloud-utils-growpart
 
         elif [[ $os = "Fedora" ]]; then
         if [[ $os_version_id -ge 22 ]]; then
             sudo dnf -y install python-devel python-dnf
-            # Uncomment the following line to install ironic-python-agent
-            #install_ironic-agent
+            install_pip
         else
             sudo dnf -y install python-devel
-            # Uncomment the following line to install ironic-python-agent
-            #install_ironic-agent
+            install_pip
         fi
     fi
     elif [[ $os_family = "Linux" ]]; then
     if [[ $os = "Alpine" ]]; then
         chmod u+s /usr/bin/sudo
         echo -e "http://dl-cdn.alpinelinux.org/alpine/edge/testing\nhttp://dl-cdn.alpinelinux.org/alpine/edge/main" | tee -a /etc/apk/repositories
-        apk upgrade --update-cache
         apk add --update-cache python python-dev openssl-dev libffi-dev alpine-sdk linux-headers build-base || true
-        # Uncomment the following line to install ironic-python-agent
-        #install_ironic-agent
+        install_pip
         apk add --update-cache cloud-init
     fi
     elif [[ $os_family = "Archlinux" ]]; then

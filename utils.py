@@ -7,13 +7,13 @@ import json
 import logging
 import os
 import shutil
-# import time
 import subprocess
 import sys
 import requests
 import git
 from urlparse import urlparse
 from difflib import get_close_matches
+from multiprocessing import Pool, cpu_count, TimeoutError
 
 __author__ = "Cody Bunch"
 __email__ = "bunchc@gmail.com"
@@ -25,7 +25,7 @@ __status__ = "Development"
 logging.basicConfig(level=logging.INFO)
 
 API_URL = 'https://app.vagrantup.com/api/v1/'
-BUILD_OLDER_THAN_DAYS = 3
+BUILD_OLDER_THAN_DAYS = 0
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
@@ -59,10 +59,11 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Packer template utils.")
     parser.add_argument(
         "action", help="Define action to take.", choices=[
-            'build_all', 'change_controller', 'cleanup_builds',
-            'commit_manifests', 'get_boxes', 'rename_templates',
-            'repo_info', 'upload_boxes', 'view_manifests', 'create_all',
-            'check_iso', 'update_templates'])
+            'build_all', 'gotta_go_fast', 'change_controller',
+            'cleanup_builds', 'commit_manifests', 'get_boxes',
+            'rename_templates', 'repo_info', 'upload_boxes',
+            'view_manifests', 'create_all', 'check_iso',
+            'update_templates'])
     parser.add_argument('--controller',
                         help='Define hard drive controller type',
                         choices=['ide', 'sata', 'scsi'])
@@ -76,7 +77,10 @@ def decide_action(args, username, vagrant_cloud_token):
     """Make decision on what to do from arguments being passed."""
     if args.action == 'build_all':
         build_all(username, vagrant_cloud_token)
-        upload_boxes(vagrant_cloud_token)
+        #upload_boxes(vagrant_cloud_token)
+    elif args.action == 'gotta_go_fast':
+        gotta_go_fast(username, vagrant_cloud_token)
+        #upload_boxes(vagrant_cloud_token)
     elif args.action == 'change_controller':
         change_controller(args)
     elif args.action == 'cleanup_builds':
@@ -168,6 +172,42 @@ def build_all(username, vagrant_cloud_token):
                         print('Build of {0} failed'.format(root))
 #                        sys.exit(1)
                     os.chdir(SCRIPT_DIR)
+
+
+def go_fast(build):
+    """Wrapper function for subprocess.Popen used by gotta_go_fast"""
+    os.chdir(os.path.dirname(build))
+    process = subprocess.Popen(build)
+    process.wait()
+    if process.returncode != 0:
+        print('Build of {0} failed'.format(root))
+
+
+def gotta_go_fast(username, vagrant_cloud_token):
+    """The same thing as build_all() but with a pool of worker processes."""
+    print('Building all images.')
+    builds = []
+    pool = Pool(processes=2)
+    #pool = Pool(processes=(cpu_count() / 2))
+    for root, _dirs, files in os.walk(SCRIPT_DIR):
+        if 'build.sh' in files:
+            with open(os.path.join(root, 'box_info.json'),
+                      'r') as box_info_file:
+                box_info = json.load(box_info_file)
+                auto_build = box_info['auto_build']
+                if auto_build is not None:
+                    if auto_build.lower() == 'true':
+                        auto_build = True
+                    else:
+                        auto_build = False
+                else:
+                    auto_build = True
+                build_image = get_box(box_info, username, vagrant_cloud_token)
+                if auto_build and build_image:
+                    builds.append(root + '/build.sh')
+                    os.chdir(SCRIPT_DIR)
+    
+    pool.map(go_fast, builds, chunksize = 1)
 
 
 def get_box(box_info, username, vagrant_cloud_token):
