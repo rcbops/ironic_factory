@@ -114,13 +114,15 @@
       {
         "compression_level": "{{ user `compression_level` }}",
         "output": "{{ user `vm_name` }}-{{.Provider}}-{{ isotime \"2006-01-02\" }}.box",
-        "type": "vagrant"
+        "type": "vagrant",
+        "keep_input_artifact": true
       },
       {
         "type": "vagrant-cloud",
         "box_tag": "{{ user `box_tag` }}",
         "access_token": "{{ user `vagrant_cloud_token` }}",
-        "version": "{{ isotime \"2006-01-02\" }}"
+        "version": "{{ isotime \"2006-01-02\" }}",
+        "keep_input_artifact": true
       },
       {
         "type": "manifest",

@@ -143,7 +143,16 @@
       "artifact_id": "",
       "packer_run_uuid": "f22b8730-4c8a-b970-eafd-ac2cefce0d05",
       "custom_data": null
+    },
+    {
+      "name": "qemu",
+      "builder_type": "qemu",
+      "build_time": 1559166126,
+      "files": null,
+      "artifact_id": "",
+      "packer_run_uuid": "864f0c9d-334e-eaf7-8183-0be3faae2d66",
+      "custom_data": null
     }
   ],
-  "last_run_uuid": "f22b8730-4c8a-b970-eafd-ac2cefce0d05"
+  "last_run_uuid": "864f0c9d-334e-eaf7-8183-0be3faae2d66"
 }

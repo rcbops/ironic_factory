@@ -14,6 +14,7 @@ import git
 from urlparse import urlparse
 from difflib import get_close_matches
 from multiprocessing import Pool, cpu_count, TimeoutError
+from requests_toolbelt.multipart import encoder
 
 __author__ = "Cody Bunch"
 __email__ = "bunchc@gmail.com"
@@ -574,30 +575,22 @@ def upload_box(box_tag, box_path, box_version, box_provider_name,
     response = requests.get(url, headers=headers)
     json_response = response.json()
     upload_path = json_response.get('upload_path')
+    box_size = str(os.path.getsize(box_path))
     files = {'file': open(box_path, 'rb')}
-    print('Uploading box: {1} version: {2} provider: {3}'.format(
+    upload_cmd = '/usr/bin/vagrant cloud publish --force {0} {1} {2} {3}'.format(box_tag, box_version, box_provider_name, box_path)
+    print('Uploading box: {0} version: {1} provider: {2}'.format(
         box_tag, box_version, box_provider_name))
-    # Upload box
-    response = requests.post(upload_path, files=files)
-    json_response = response.json()
-    if response.status_code == 200:
-        url = '{0}/{1}/version/{2}/release'.format(
-            box_api_url, box_tag, box_version)
-        # Release version
-        response = requests.put(url, headers=headers)
-        json_response = response.json()
-        if response.status_code == 200:
-            pass
-        else:
-            print(response.status_code)
-            print(json_response)
-            sys.exit(1)
-        print(json_response)
-    else:
-        print(response.status_code)
-        print(json_response)
+    print("""
+    Local path: {0}
+    Remote path: {1}
+    Upload command: {2}
+    """.format(box_path, upload_path, upload_cmd))
+    
+    process = subprocess.Popen(upload_cmd.split())
+    process.wait()
+    if process.returncode != 0:
+        print('Upload of {0} failed'.format(box_tag))
         sys.exit(1)
-    print(json_response)
 
 
 def commit_manifests(repo_facts):
