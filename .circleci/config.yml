@@ -241,28 +241,25 @@ jobs:
       - attach_workspace:
           at: ~/images
       - runbuild:
+          # Build accepting all the defaults
           os: "Alpine"
           version: "3.9"
           <<: *image_defaults
       - runbuild:
+          # Build with vuln scanning enabled
           os: "CentOS"
           version: "7"
           <<: *image_defaults
+          scan: true
       - runbuild:
+          # Build with all values specified
           os: "Ubuntu"
           version: "bionic64"
-          <<: *image_defaults
-
-  # Upload the images to cloud files
-  upload-image:
-    <<: *job_defaults
-    steps:
-      - checkout
-      - attach_workspace:
-          at: ~/images
-      - run:
-          name: Upload image to cloud files
-          command: echo "some swift command here"
+          server: "server"
+          skip-post-processors: "vagrant,vagrant-cloud,shell,manifests"
+          builders: "qemu"
+          scan: false
+          upload: true
 
   # Destroy the created Packet.net bare metal device.
   destroy-metal:
@@ -285,6 +282,61 @@ jobs:
           command: .circleci/bin/scrap-metal
 
 workflows:
-  build-and-test:
+  # Scheduled job to clean up cloud instances
+  cleanup-cloud-instances:
+    triggers:
+      - schedule:
+          cron: "0 0,12 * * *"
+          filters:
+            branches:
+              only:
+                - master
     jobs:
-      - run-builds
+      - scrap-metal:
+          filters:
+            branches:
+              only:
+              - master
+  # Run the builds on a schedule
+  build-and-test:
+    triggers:
+      - schedule:
+          cron: "0 0 4 1/14 * ? *"
+          filters:
+            branches:
+              only:
+                - master
+    jobs:
+      - validate-upstream:
+          filters:
+            branches:
+              only:
+                - master
+      - create-metal:
+          requires:
+            - validate-upstream
+          filters:
+            branches:
+              only:
+                - master
+      - provision-metal:
+          requires:
+            - create-metal
+          filters:
+            branches:
+              only:
+                - master
+      - run-builds:
+          requires:
+            - provision-metal
+          filters:
+            branches:
+              only:
+                - master
+      - destroy-metal:
+          requires:
+            - run-builds
+          filters:
+            branches:
+              only:
+                - master
