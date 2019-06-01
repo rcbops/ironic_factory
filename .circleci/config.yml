@@ -10,6 +10,8 @@ _job_defaults: &job_defaults
   working_directory: ~/images
   docker:
     - image: st2opsadmin/ovabuild-circle
+      environment:
+        IMAGE_DATE: "`date --iso-8601`"
 
 # Re-used in jobs to terminate the Rackspace bare-metal device
 _destroy_device: &destroy_device
@@ -17,49 +19,182 @@ _destroy_device: &destroy_device
   command: ansible-playbook -v -i inventory destroy.yml
   working_directory: .circleci/ansible/
 
-# Extract and export 'ST2_VERSION' and 'BOX_VERSION' when 'CIRCLE_TAG' ENV var is set
-_pin_version_on_release: &pin_version_on_release
-  run:
-    name: Pin 'ST2_VERSION' and 'BOX_VERSION' on tag release
-    command: |
-      if [ ! -z "$CIRCLE_TAG" ]; then
-        echo "export ST2_VERSION=$(echo $CIRCLE_TAG|grep -oP '(?<=v)(\d+\.\d+\.\d+)(?=-\d{8}$)')" >> $BASH_ENV
-        echo "export BOX_VERSION=$(echo $CIRCLE_TAG|grep -oP '(?<=\d-)\d{8}$')" >> $BASH_ENV
-        . $BASH_ENV
-        echo "Pinned ST2_VERSION=$ST2_VERSION and BOX_VERSION=$BOX_VERSION based on release CIRCLE_TAG=$CIRCLE_TAG"
-      else
-        echo '$CIRCLE_TAG is not set, - skipping a non release build ...'
-      fi
+# Defines default values for building an image.
+# 
+# The default values assume you are building a server image for use on KVM or XEN
+# The artifact produced by the qemu builder is a qcow2 file suitable for use with
+# OpenStack Ironic
+_image_defaults: &image_defaults
+  server: "server"
+  skip-post-processors: "vagrant,vagrant-cloud,shell,manifests"
+  builders: "qemu"
+  scan: false
+  upload: true
 
-version: 2
+version: 2.1
+commands:
+  # scan-image
+  # When invoked, executes a security scan against a vm image
+  # using the 'oscap-vm' utility and the oval definitions from:
+  # https://oval.cisecurity.org/repository/download/
+  scan-image:
+    description: "Scans an image artifact for vulnerabilities."
+    parameters:
+      source-path:
+        description: "Defines the source path of the image"
+        type: string
+        default: ""
+      report-filename:
+        description: "Defines the filename for the report"
+        type: string
+        default: ""
+    steps:
+      - run:
+          name: "Scanning << parameters.source-path >>"
+          # Runs the oscap-vm image scanner tool
+          # TODO: If the host machine is build with CentOS, replace docker with native tool
+          command: >
+              docker run --rm -t \\
+                -v << parameters.source-path >>:/mnt/vmimage \\
+                -v $(PWD)/reports:/reports \\
+                bunchc/oscap-vm oscap-vm image \\
+                  /mnt/vmimage \\
+                  oval eval << parameters.report-filename >>
+      - run:
+          name: "Copy report to CircleCI"
+          command: rsync -avz -e 'ssh -o StrictHostKeyChecking=no' root@metal:/home/ova/reports .
+      - store_artifacts:
+          path: reports
+          destination: .
+  # upload-cloudfiles
+  # When invoked, uploads the produced image to Cloud Files
+  #
+  ## Required ENV variables in CircleCI account:
+  # RACKSPACE_API_TOKEN
+  # RACKSPACE_PROJECT_ID
+  upload-cloudfiles:
+    description: "Uploads an image to Cloud Files."
+    parameters:
+      source-path:
+        description: "Defines the source path of the image."
+        type: string
+        default: ""
+      dest-path:
+        description: "Defines the destination path to upload to."
+        type: string
+        default: ""
+    steps:
+      - run:
+          name: Uploading << parameters.source-path >> to Cloud Files
+          command: echo "python-swiftclient command here"
+  # runbuild
+  # When supplied with parameters for an OS will run `packer build` for that OS
+  # 
+  # Default values are provided for Alpine, see the `jobs:` section of this file
+  # to define which builds are to be run.
+  runbuild:
+    description: "Runs a packer build with the given attributes"
+    parameters:
+      os:
+        description: "OS to build"
+        default: "Alpine"
+        type: enum
+        enum: ["Alpine","Arch","CentOS","Debian","Ubuntu"]
+      server:
+        # Defines if a server os is to be built.
+        # Desktop builds are provided for some packer templates
+        # however, you should not need to change this value.
+        description: "Defines if we are building a server OS"
+        type: string
+        default: "server"
+      version:
+        description: "The OS version to build"
+        type: string
+        default: "3.9"
+      skip-post-processors:
+        # A comma list of post-processors to skip. The values defined
+        # here are fed to the '-except=""' packer parameter.
+        # Possible values are: vagrant, vagrant-cloud, shell, manifest
+        #
+        # Since we are uploading to Cloud Files, this is set to skip 
+        # everyting except 'shell' and 'manifest'. To enable building
+        # of a vagrant '.box' file, you can change the value as follows:
+        #
+        # - run-build:
+        #   skip-post-processors: "vagrant-cloud"
+        description: "Defines the post processors to run"
+        type: string
+        default: "vagrant,vagrant-cloud,shell,manifest"
+      builders:
+        # A comma list of builds to run. The values defined here are fed
+        # to the '-only=""' packer parameter. Possible values are:
+        # vmare-iso, virtualbox-iso, and qemu
+        #
+        # Since we are building for Ironic, this is set to qemu by default
+        # If additional builders are to be run, specify them as follows:
+        #
+        # - run-build:
+        #   builders: "qemu,virtualbox-iso"
+        description: "Defines a list of builds to run."
+        type: string
+        default: "qemu"
+      scan:
+        # Defines if the vulnerability scanner will be run.
+        # Default is set to false as scanning is time intensive.
+        # To enable scanning, change this value to true in the _image_defaults section
+        # 
+        # Example:
+        #  _image_defaults: &image_defaults
+        #    scan: true
+        description: "Defines if the image should be vulnerability scanned."
+        type: boolean
+        default: false
+      upload:
+        description: "Defines if the image should be uploaded to Cloud Files."
+        type: boolean
+        default: false
+    steps:
+      - run: > 
+          packer build \\
+            -machine-readable \\
+            -only=<< parameters.builders >> \\
+            -except=<< parameters.skip-post-processors >> \\
+            -var-file="<< parameters.os >>/<< parameters.version >>/<< parameters.server >>/box-info.json" \\
+            -var-file="<< parameters.os >>/<< parameters.version >>/<< parameters.server >>/template.json" \\
+            -var-file="private-vars.json" \\
+            << parameters.os >>-<< parameters.server >>.json
+      - when:
+          condition: << parameters.scan >>
+          steps:
+            - scan-image:
+                source-path: "<< parameters.os >>/<< parameters.version >>/<< parameters.server >>/output-<< parameters.version >>-<< parameters.server >>-template-<< parameters.builders >>-${IMAGE_DATE}" 
+                report-filename: "<< parameters.os >>-<< parameters.version >>--<< parameters.builders >>-${IMAGE_DATE}.html"
+      - when:
+          condition: << parameters.upload >>
+          steps:
+            - upload-cloudfiles:
+                source-path: "<< parameters.os >>/<< parameters.version >>/<< parameters.server >>/output-<< parameters.version >>-<< parameters.server >>-template-<< parameters.builders >>-${IMAGE_DATE}" 
+                dest-path: "cloud files path?"
+
+
 jobs:
-  # Run Packer Lint checks for OVA json file
-  packer-lint:
+  # Validate and update upstream artifact details in templates
+  validate-upstream:
     <<: *job_defaults
     steps:
       - checkout
       - run:
-          name: Packer Lint Check
-          command: make validate
-
-  # Run Inspec Lint checks for test files
-  inspec-lint:
-    <<: *job_defaults
-    steps:
-      - checkout
+          name: Check ISO
+          command: python utils.py check_iso
       - run:
-          name: Inspec Lint Check
-          command: |
-            cd test/integration/
-            for dir in */; do
-              dir=$(basename $dir)
-              if [ -f "${dir}/inspec.yml" ]; then
-                echo -e "\nRunning Inspec lint for \033[1;36m${dir}\033[0m ..."
-                inspec check --diagnose ${dir}
-              fi
-            done
+          name: Validate checksums
+          command: python utils.py check_sha
+      - run:
+          name: Update templates
+          command: python utils.py update_templates
+          when: on_fail
 
-  # Request creation of bare-metal server on Packet.net
+  # Request creation of bare-metal server on Rackspace on-metal
   create-metal:
     <<: *job_defaults
     steps:
@@ -69,7 +204,7 @@ jobs:
           command: ansible-playbook -v create.yml
           working_directory: .circleci/ansible/
       - persist_to_workspace:
-          root: ~/ova
+          root: ~/images
           paths:
             - .circleci/ansible/.hosts
             - .circleci/ansible/inventory
@@ -77,69 +212,57 @@ jobs:
           <<: *destroy_device
           when: on_fail
 
-  # Install the required software like Packer, Virtualbox, etc on bare-metal Packet.net server
+  # Install the required software like Packer, Virtualbox, etc on bare-metal host
   provision-metal:
     <<: *job_defaults
     steps:
       - checkout
       - attach_workspace:
-          at: ~/ova
-      # Install the requirements like virtualbox on the bare metal server.
-      # TODO: Eventually this step will not be required since these packages will be part of the custom image (which hasn't been created yet).
-      # TODO: See "Codify the ova build Infrastructure #8": https://github.com/StackStorm/ova/issues/8
+          at: ~/images
+      # Install the requirements like kvm on the bare-metal server.
       - run:
           name: Provision the bare metal server
           command: ansible-playbook -v -i inventory provision.yml
           working_directory: .circleci/ansible/
       - run:
           name: Sync git workspace to metal server
-          command: rsync -avz -e 'ssh -o StrictHostKeyChecking=no' . root@metal:/home/ova/
+          command: rsync -avz -e 'ssh -o StrictHostKeyChecking=no' . root@metal:/home/images/
           environment:
             HOSTALIASES: .circleci/ansible/.hosts
       - run:
           <<: *destroy_device
           when: on_fail
 
-  # Run an OVA build via Packer on bare-metal server
-  build-test-ova:
+  # Run packer builds
+  run-builds:
     <<: *job_defaults
-    environment:
-      HOSTALIASES: .circleci/ansible/.hosts
     steps:
       - checkout
       - attach_workspace:
-          at: ~/ova
-      - <<: *pin_version_on_release
-      - run:
-          name: Build & Test OVA
-          command: fab -f .circleci/bin/build.py -H metal build
-      - run:
-          name: Fetch back the produced OVA image
-          command: rsync -avz -e 'ssh -o StrictHostKeyChecking=no' root@metal:/home/ova/builds .
-      - store_artifacts:
-          path: builds
-          destination: .
-      - persist_to_workspace:
-          root: ~/ova
-          paths:
-            - builds
-      - run:
-          <<: *destroy_device
-          when: on_fail
+          at: ~/images
+      - runbuild:
+          os: "Alpine"
+          version: "3.9"
+          <<: *image_defaults
+      - runbuild:
+          os: "CentOS"
+          version: "7"
+          <<: *image_defaults
+      - runbuild:
+          os: "Ubuntu"
+          version: "bionic64"
+          <<: *image_defaults
 
-  deploy-ova:
+  # Upload the images to cloud files
+  upload-image:
     <<: *job_defaults
     steps:
       - checkout
       - attach_workspace:
-          at: ~/ova
-      - <<: *pin_version_on_release
+          at: ~/images
       - run:
-          name: Deploy OVA to GitHub releases
-          command: ghr -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} ${CIRCLE_TAG} builds/*.ova
-      - run:
-          name: Deploy BOX to Vagrant Cloud
-          command: make deploy
+          name: Upload image to cloud files
+          command: echo "some swift command here"
 
   # Destroy the created Packet.net bare metal device.
   destroy-metal:
@@ -162,69 +285,6 @@ jobs:
           command: .circleci/bin/scrap-metal
 
 workflows:
-  version: 2
-  packer-st2-cleanup:
-    triggers:
-      - schedule:
-          cron: "0 0,12 * * *"
-          filters:
-            branches:
-              only:
-                - master
+  build-and-test:
     jobs:
-      - scrap-metal:
-          filters:
-            branches:
-              only:
-                - master
-  packer-st2:
-    jobs:
-      - packer-lint:
-          filters:
-            tags:
-              only: /.*/
-      - inspec-lint:
-          filters:
-            tags:
-              only: /.*/
-      - create-metal:
-          requires:
-            - packer-lint
-            - inspec-lint
-          filters:
-            tags:
-              only: /.*/
-      - provision-metal:
-          requires:
-            - create-metal
-          filters:
-            tags:
-              only: /.*/
-      - build-test-ova:
-          requires:
-            - provision-metal
-          filters:
-            tags:
-              only: /.*/
-      - destroy-metal:
-          requires:
-            - build-test-ova
-          filters:
-            tags:
-              only: /.*/
-      - deploy-ova:
-          requires:
-            - build-test-ova
-          filters:
-            branches:
-              ignore:
-                - /.*/
-            tags:
-              only:
-                - /^v\d+\.\d+\.\d+-\d{8}$/
-
-experimental:
-  notify:
-    branches:
-      only:
-        - master
+      - run-builds
