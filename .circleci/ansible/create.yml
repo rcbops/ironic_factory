@@ -1,0 +1,71 @@
+---
+- name:
+    Create a Rackspace cloud server, wait for SSH and save
+    instance metadata like server IP and ID for further consumption.
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Install Rackspace module dependencies
+      pip:
+        name: pyrax
+
+    - name: Add SSH key to Rackspace account
+      local_action:
+        module: rax_keypair
+        credentials: ~/.rack/config
+        region: DFW
+        name: "Cody - Image Factory Test Key"
+        public_key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+
+    - name: "Create server"
+      local_action:
+        module: rax
+        image: 6258d64f-64eb-4244-843e-01e92c66d1b2
+        region: DFW
+        user_data: |
+            #cloud-config
+            users:
+              - name: ova
+                sudo: ALL=(ALL) NOPASSWD:ALL
+        flavor: performance2-30
+        wait: yes
+        credentials: ~/.rack/config
+        name:  "{{ lookup('env', 'CIRCLE_SHA1')|truncate(8,True,'') }}{{ '%Y%m%d%H%M%S'|strftime }}"
+        state: present
+        wait_timeout: 600
+        key_name: "Cody - Image Factory Test Key"
+      register: rackspace
+      retries: 5
+      delay: 10
+      until: rackspace is succeeded
+
+    - name: Create inventory file with Rackspace server device details
+      blockinfile:
+        create: yes
+        path: "{{ playbook_dir }}/inventory"
+        block: |
+          all:
+            hosts:
+              metal:
+                ansible_host: {{ rackspace.instances[0].rax_accessipv4 }}
+                ansible_port: 22
+            vars:
+              # disable SSH host key checking
+              ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
+              rackspace_device_id: {{ rackspace.instances[0].id }}
+
+    - name: Create HOSTALIASES .hosts file, - a dynamic alternative of /etc/hosts
+      blockinfile:
+        create: yes
+        path: "{{ playbook_dir }}/.hosts"
+        block: |
+          # see https://unix.stackexchange.com/a/226318/217844
+          metal {{ rackspace.instances[0].rax_accessipv4 }}.xip.io
+
+    - name: Wait for SSH
+      wait_for:
+        delay: 1
+        host: "{{ rackspace.instances[0].rax_accessipv4 }}"
+        port: 22
+        state: started
+        timeout: 120

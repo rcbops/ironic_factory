@@ -1,0 +1,17 @@
+---
+- name: "Create Cloud Files container"
+  hosts: local
+  gather_facts: no
+  tasks:
+    - name: "List all containers"
+      rax_files:
+        state: list
+      register: containers
+
+    - name: "Create container called {{ lookup('env', 'DEST_PATH') }}"
+      rax_files:
+        container: "{{ lookup('env', 'DEST_PATH') }}"
+        state: present
+      when: >
+            containers is defined and
+            "{{ lookup('env', 'DEST_PATH') }}" is not in containers

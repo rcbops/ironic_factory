@@ -1,0 +1,15 @@
+---
+- name: "Upload Ironic image to Cloud Files"
+  hosts: local
+  gather_facts: no
+  tasks:
+    - name: "Upload Ironic image"
+      rax_files_objects:
+        container: "{{ lookup('env', 'DEST_PATH') }}"
+        src: "{{ lookup('env', 'SRC_FILE') }}"
+        method: put
+    - name: "Upload checksum for Ironic image"
+      rax_files_objects:
+        container: "{{ lookup('env', 'DEST_PATH') }}"
+        src: "{{ lookup('env', 'CHECKSUM_FILE') }}"
+        method: put

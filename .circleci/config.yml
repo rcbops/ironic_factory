@@ -33,45 +33,34 @@ _image_defaults: &image_defaults
 
 version: 2.1
 commands:
-  # scan-image
-  # When invoked, executes a security scan against a vm image
-  # using the 'oscap-vm' utility and the oval definitions from:
-  # https://oval.cisecurity.org/repository/download/
-  scan-image:
-    description: "Scans an image artifact for vulnerabilities."
+  # create-containers
+  # When invoked, creates a container for an instance on cloudfiles
+  #
+  # This requires the following ENV variables in CircleCI
+  # RACKSPACE_API_TOKEN
+  # RACKSPACE_PROJECT_ID
+  # RACKSPACE_USERNAME
+  # RACKSPACE_REGION
+  create-containers:
+    description: "Creates a container on Rackspace Cloudfiles"
     parameters:
-      source-path:
-        description: "Defines the source path of the image"
-        type: string
-        default: ""
-      report-filename:
-        description: "Defines the filename for the report"
+      container-path:
+        description: "Desired path of the container"
         type: string
         default: ""
     steps:
-      - run:
-          name: "Scanning << parameters.source-path >>"
-          # Runs the oscap-vm image scanner tool
-          # TODO: If the host machine is build with CentOS, replace docker with native tool
-          command: >
-              docker run --rm -t \\
-                -v << parameters.source-path >>:/mnt/vmimage \\
-                -v $(PWD)/reports:/reports \\
-                bunchc/oscap-vm oscap-vm image \\
-                  /mnt/vmimage \\
-                  oval eval << parameters.report-filename >>
-      - run:
-          name: "Copy report to CircleCI"
-          command: rsync -avz -e 'ssh -o StrictHostKeyChecking=no' root@metal:/home/ova/reports .
-      - store_artifacts:
-          path: reports
-          destination: .
+        - run:
+          name: "Creating << parameters.container-path >> on Cloud Files"
+          command: ansible-playbook -v -i inventory create-container.yml
+          working_directory: .circleci/ansible/
   # upload-cloudfiles
   # When invoked, uploads the produced image to Cloud Files
   #
-  ## Required ENV variables in CircleCI account:
+  # This requires the following ENV variables in CircleCI:
   # RACKSPACE_API_TOKEN
   # RACKSPACE_PROJECT_ID
+  # RACKSPACE_USERNAME
+  # RACKSPACE_REGION
   upload-cloudfiles:
     description: "Uploads an image to Cloud Files."
     parameters:
@@ -86,7 +75,8 @@ commands:
     steps:
       - run:
           name: Uploading << parameters.source-path >> to Cloud Files
-          command: echo "python-swiftclient command here"
+          command: ansible-playbook -v -i inventory upload-image.yml
+          working_directory: .circleci/ansible/
   # runbuild
   # When supplied with parameters for an OS will run `packer build` for that OS
   # 
@@ -163,12 +153,6 @@ commands:
             -var-file="<< parameters.os >>/<< parameters.version >>/<< parameters.server >>/template.json" \\
             -var-file="private-vars.json" \\
             << parameters.os >>-<< parameters.server >>.json
-      - when:
-          condition: << parameters.scan >>
-          steps:
-            - scan-image:
-                source-path: "<< parameters.os >>/<< parameters.version >>/<< parameters.server >>/output-<< parameters.version >>-<< parameters.server >>-template-<< parameters.builders >>-${IMAGE_DATE}" 
-                report-filename: "<< parameters.os >>-<< parameters.version >>--<< parameters.builders >>-${IMAGE_DATE}.html"
       - when:
           condition: << parameters.upload >>
           steps:
