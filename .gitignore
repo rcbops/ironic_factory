@@ -1,5 +1,6 @@
 .DS_Store
 .vscode/
+..bfg-report/
 *.box
 *.iso
 *.qcow2
@@ -11,3 +12,7 @@ venv
 .hosts
 *.retry
 inventory
+build.log
+TODO.md
+cleanup_boxes.sh
+run_builds.sh
