@@ -1,0 +1,15 @@
+---
+- hosts: all
+  sudo: yes
+  vars:
+    packer_plugins:
+      packer-builder-lxc:
+        name: lxc
+        type: builder
+        url: https://github.com/ldx/packer-builder-lxc/releases/download/5/packer-builder-lxc
+      packer-provisioner-host-command:
+        name: host-command
+        type: provisioner
+        url: https://github.com/ldx/packer-provisioner-host-command/releases/download/6/packer-provisioner-host-command
+  roles:
+    - { role: ansible-packer }

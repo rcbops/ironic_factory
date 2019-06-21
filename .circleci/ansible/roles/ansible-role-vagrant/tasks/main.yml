@@ -1,0 +1,22 @@
+---
+# Installs vagrant along with plugins and boxes if defined
+
+- name: Ensure temp download directory exist
+  file: state=directory path={{vagrant_tmp_dir}}
+  tags: ["packages","vagrant"]
+
+- include_tasks: Debian.yml
+  when: ansible_os_family == 'Debian'
+  tags: ["packages","vagrant"]
+
+- include_tasks: RedHat.yml
+  when: ansible_os_family == 'RedHat'
+  tags: ["packages","vagrant"]
+
+- include_tasks: plugins.yml
+  when:
+    vagrant_plugins is defined
+
+- include_tasks: boxes.yml
+  when:
+    vagrant_boxes is defined

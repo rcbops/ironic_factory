@@ -1,0 +1,6 @@
+Script started on 2019-05-31 12:13:26-05:00 [<not executed on terminal>]
+y
+[0;33mThis will completely remove bunchc/centos7-desktop from Vagrant Cloud. This cannot be undone.[0m
+[0mDo you wish to continue? [y/N] [0m[0;32mDeleted box bunchc/centos7-desktop[0m
+
+Script done on 2019-05-31 12:13:29-05:00 [COMMAND_EXIT_CODE="0"]

@@ -1,15 +1,39 @@
 ---
 - name: "Upload Ironic image to Cloud Files"
-  hosts: local
+  hosts: localhost
   gather_facts: no
   tasks:
+    - name: Ensure pyrax is installed
+      pip:
+        name: pyrax
+    - name: "Create container if required"
+      local_action:
+        module: rax_files
+        credentials: ~/.rack/config
+        container: "Cody-Test-Ironic-Images"
+        region: IAD
+        state: present
     - name: "Upload Ironic image"
-      rax_files_objects:
-        container: "{{ lookup('env', 'DEST_PATH') }}"
-        src: "{{ lookup('env', 'SRC_FILE') }}"
+      local_action:
+        module: rax_files_objects
+        credentials: ~/.rack/config
+        container: "Cody-Test-Ironic-Images"
+        src: "/virtual_machines/packer-templates/bionic64-server-packer-template-2019-06-20.qcow2"
+        region: IAD
         method: put
-    - name: "Upload checksum for Ironic image"
-      rax_files_objects:
-        container: "{{ lookup('env', 'DEST_PATH') }}"
-        src: "{{ lookup('env', 'CHECKSUM_FILE') }}"
+    - name: "Upload Ironic image"
+      local_action:
+        module: rax_files_objects
+        credentials: ~/.rack/config
+        container: "Cody-Test-Ironic-Images"
+        src: "/virtual_machines/packer-templates/bionic64-server-packer-template-2019-06-20.qcow2"
+        dest: "Ubuntu/bionic64-server-packer-template-2019-06-20.qcow2"
+        region: IAD
         method: put
+    - name: "Clean out container"
+      local_action:
+        module: rax_files_objects
+        credentials: ~/.rack/config
+        container: "Cody-Test-Ironic-Images"
+        region: IAD
+        method: delete

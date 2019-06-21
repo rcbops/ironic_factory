@@ -1,0 +1,7 @@
+---
+# Download and install vagrant boxes
+
+- name: Install Vagrant boxes
+  shell: "vagrant box add --force --provider {{ item['provider'] | default('virtualbox') }} --name {{ item.name }} {{ item['url'] }}"
+  with_items:
+    - "{{ vagrant_boxes }}"

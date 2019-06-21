@@ -1,0 +1,13 @@
+{
+  "builders": {
+{% for key, value in packer_plugins.iteritems() if value.type == "builder" %}
+"{{ value.name }}": "/usr/local/bin/{{ key }}"
+{% endfor %}
+  },
+
+  "provisioners": {
+{% for key, value in packer_plugins.iteritems() if value.type == "provisioner" %}
+"{{ value.name }}": "/usr/local/bin/{{ key }}"
+{% endfor %}
+  }
+}

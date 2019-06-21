@@ -1,0 +1,5 @@
+---
+- name: install packages on Debian based distributions
+  apt: name={{ item }} state=present update_cache=true
+  with_items:
+    - unzip

@@ -2,8 +2,12 @@
 .vscode/
 *.box
 *.iso
+*.qcow2
 output-*
 packer_cache
 private_vars.json
 Vagrantfile
 venv
+.hosts
+*.retry
+inventory

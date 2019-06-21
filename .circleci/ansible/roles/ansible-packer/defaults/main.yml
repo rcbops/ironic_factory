@@ -1,0 +1,6 @@
+---
+packer_base_url: https://releases.hashicorp.com/packer/1.4.1/
+packer_pkg: packer_1.4.1_linux_amd64.zip
+packer_version_str: "Packer v1.4.1"
+packer_plugins_force_install: false
+packer_plugins: {}

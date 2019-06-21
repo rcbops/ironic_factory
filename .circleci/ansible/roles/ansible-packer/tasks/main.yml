@@ -1,0 +1,93 @@
+---
+- name: install packages on Debian
+  include: install_packages_debian.yml
+  when: ansible_os_family == "Debian"
+
+- name: install packages on Red Hat
+  include: install_packages_redhat.yml
+  when: ansible_os_family == "RedHat"
+
+# Check what version of packer is currently installed.
+- name: set default value of packer_version and packer_install_needed
+  set_fact:
+    packer_version: ""
+    packer_install_needed: false
+
+- name: check packer version
+  shell: packer version
+  register: packer_version_check
+  ignore_errors: true
+
+- name: update value of packer_version
+  set_fact:
+    packer_version: "{{ packer_version_check.stdout }}"
+  when: packer_version_check|success
+
+- name: update value of packer_install_needed based on version check
+  set_fact:
+    packer_install_needed: true
+  when: packer_version.find('{{ packer_version_str }}') == -1
+
+- name: show version info
+  debug: msg="Version requested is {{ packer_version_str }}, found {{ packer_version }}, install needed is {{ packer_install_needed }}"
+
+# Create directories, then fetch and install packer package.
+- name: create packer directories
+  file: path={{ item }}
+        state=directory
+        mode=0755
+        owner=root
+        group=root
+  with_items:
+    - /usr/local/bin/
+    - /var/cache/packer
+
+- name: fetch packer
+  get_url: url={{ packer_base_url }}{{ packer_pkg }}
+           dest=/var/cache/packer/{{ packer_pkg }}
+  when: packer_install_needed
+
+- name: link packer-packer as packer if it does not exist
+  file: path=/usr/local/bin/packer-packer
+        state=absent
+  when: packer_install_needed
+
+- name: remove old packer version
+  shell: rm -f /usr/local/bin/packer*
+  when: packer_install_needed
+
+- name: unpack packer
+  unarchive: src=/var/cache/packer/{{ packer_pkg }}
+             dest=/usr/local/bin
+             copy=no
+  when: packer_install_needed
+
+- name: fetch packer plugins
+  get_url: url={{ item.value.url }}
+           dest=/usr/local/bin/{{ item.key }}
+           force={{ packer_plugins_force_install }}
+  with_dict: '{{ packer_plugins | default ({}) }}'
+
+- name: make packer binaries executable
+  shell: chmod 0755 /usr/local/bin/packer*
+
+- name: check if packer needs to be symlinked
+  command: /bin/ls -1 /usr/local/bin/packer
+  ignore_errors: true
+  register: packer_exists
+
+- name: link packer-packer as packer if it does not exist
+  file: src=/usr/local/bin/packer-packer
+        dest=/usr/local/bin/packer
+        owner=root
+        group=root
+        state=link
+  when: packer_install_needed and packer_exists|failed
+
+- name: create packer configuration file
+  template: src=etc/packer.conf.j2
+            dest=/etc/packer.conf
+            mode=0644
+            owner=root
+            group=root
+  when: packer_plugins is defined

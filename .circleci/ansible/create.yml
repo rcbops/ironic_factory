@@ -13,24 +13,24 @@
       local_action:
         module: rax_keypair
         credentials: ~/.rack/config
-        region: DFW
+        region: IAD
         name: "Cody - Image Factory Test Key"
         public_key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
 
     - name: "Create server"
       local_action:
         module: rax
-        image: 6258d64f-64eb-4244-843e-01e92c66d1b2
-        region: DFW
+        image: 03cc1fe2-b597-406c-a7b1-22b2a57850cf
+        region: IAD
         user_data: |
             #cloud-config
             users:
               - name: ova
                 sudo: ALL=(ALL) NOPASSWD:ALL
-        flavor: performance2-30
+        flavor: onmetal-io2
         wait: yes
         credentials: ~/.rack/config
-        name:  "{{ lookup('env', 'CIRCLE_SHA1')|truncate(8,True,'') }}{{ '%Y%m%d%H%M%S'|strftime }}"
+        name:  "Cody-test-{{ lookup('env', 'CIRCLE_SHA1')|truncate(8,True,'') }}{{ '%Y%m%d%H%M%S'|strftime }}"
         state: present
         wait_timeout: 600
         key_name: "Cody - Image Factory Test Key"

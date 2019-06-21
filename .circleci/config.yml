@@ -33,26 +33,6 @@ _image_defaults: &image_defaults
 
 version: 2.1
 commands:
-  # create-containers
-  # When invoked, creates a container for an instance on cloudfiles
-  #
-  # This requires the following ENV variables in CircleCI
-  # RACKSPACE_API_TOKEN
-  # RACKSPACE_PROJECT_ID
-  # RACKSPACE_USERNAME
-  # RACKSPACE_REGION
-  create-containers:
-    description: "Creates a container on Rackspace Cloudfiles"
-    parameters:
-      container-path:
-        description: "Desired path of the container"
-        type: string
-        default: ""
-    steps:
-        - run:
-          name: "Creating << parameters.container-path >> on Cloud Files"
-          command: ansible-playbook -v -i inventory create-container.yml
-          working_directory: .circleci/ansible/
   # upload-cloudfiles
   # When invoked, uploads the produced image to Cloud Files
   #
