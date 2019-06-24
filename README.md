@@ -1,3 +1,7 @@
+# ironic_factory
+
+An image building factor for OpenStack Ironic using Packer
+
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
@@ -14,10 +18,6 @@
   - [Author Information](#author-information)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
-# ironic_factory
-
-An image building factor for OpenStack Ironic using Packer
 
 ## Purpose
 
@@ -58,10 +58,10 @@ There are two ways to use this repository:
 There are several ways to perform a local build. Most commonly you will need to run an individual build to troubleshoot. This can be done as follows:
 
 ```shell
-$ git clone https://github.com/rcbops/ironic_factory
-$ cd ironic_factory
-$ cd Ubuntu/bionic64/server
-$ ./build.sh
+git clone https://github.com/rcbops/ironic_factory
+cd ironic_factory
+cd Ubuntu/bionic64/server
+./build.sh
 ```
 
 In the above commands, you will need to change the path from `Ubuntu/bionic64/server` to whatever OS and version you are troubleshooting. Optionally, you can add `PACKER_LOG=1` to the build command for more verbose output.
@@ -77,7 +77,7 @@ qemu: vnc://0.0.0.0:5980
 Additionally, you can run all of the builds at once using the included `utils.py` script as follows:
 
 ```shell
-$ python utils.py build_all
+python utils.py build_all
 ```
 
 ### CI builds
