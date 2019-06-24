@@ -1,3 +1,15 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [ansible-role-vagrant](#ansible-role-vagrant)
+- [Local installation : (ansible need to be installed)](#local-installation--ansible-need-to-be-installed)
+- [Simple Usage :](#simple-usage-)
+- [Usage with version specification](#usage-with-version-specification)
+- [Specify virtualbox installation (For Debian)](#specify-virtualbox-installation-for-debian)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ansible-role-vagrant
 ====================
 

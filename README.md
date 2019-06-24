@@ -2,41 +2,34 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-- [packer-templates](#packer-templates)
+- [ironic_factory](#ironic_factory)
   - [Purpose](#purpose)
   - [Information](#information)
   - [Requirements](#requirements)
     - [Software](#software)
   - [Usage](#usage)
-    - [Building a box](#building-a-box)
-      - [Select distro](#select-distro)
-      - [Build distro](#build-distro)
-    - [Testing a box](#testing-a-box)
-      - [Add box to Vagrant](#add-box-to-vagrant)
-      - [Create Vagrantfile](#create-vagrantfile)
-      - [Spin it up](#spin-it-up)
-      - [Test it out](#test-it-out)
-      - [Tear it down](#tear-it-down)
-    - [Cleaning up](#cleaning-up)
-    - [Using pre-built and ready for consumption Vagrant templates](#using-pre-built-and-ready-for-consumption-vagrant-templates)
+    - [Local builds](#local-builds)
+    - [CI builds](#ci-builds)
   - [License](#license)
   - [Author Information](#author-information)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-# packer-templates
+# ironic_factory
+
+An image building factor for OpenStack Ironic using Packer
 
 ## Purpose
 
-This repository is for maintaining my personal
-[Vagrant Box Templates](https://github.com/mrlesmithjr/vagrant-box-templates)
-using [Packer](https://www.packer.io).
+This repository contains the definitions to build images of a number of Linux distributions suitable for use with OpenStack Ironic. CircleCI is used to build these images once a month using [Packer](https://www.packer.io/).
 
 ## Information
 
+All builds in this repository
+
 All builds are based on the following providers:
 
-- [virtualbox](https://www.virtualbox.org)
+- [qemu](https://www.virtualbox.org)
 - [vmware_desktop](https://www.vmware.com)
 
 - You can find my collection of builds [here](https://app.vagrantup.com/mrlesmithjr)
@@ -46,111 +39,86 @@ All builds are based on the following providers:
 
 ## Requirements
 
-All of my Packer templates are configured to upload to Vagrant Cloud after a successful build has been executed. In order to upload a box version to Vagrant Cloud, you will need to create a `private_vars.json` file in the root of this repo with the following info:
-
-```json
-{
-  "vagrant_cloud_token": "Your Vagrant Cloud private API token",
-  "username": "Your Vagrant Cloud username"
-}
-```
-
-If you do not want this functionality, you will need to edit the respective template within the distro folder and remove the following:
-
-```json
-{
-  "type": "vagrant-cloud",
-  "box_tag": "{{ user `box_tag` }}",
-  "access_token": "{{ user `vagrant_cloud_token` }}",
-  "version": "{{ isotime \"2006-01-02\" }}"
-}
-```
+If using CircleCI to automate the build process, you will need to fork this repository and edit `.circleci/config.yml` accordingly. Otherwise, to build locally, the following is required:
 
 ### Software
 
 - [Packer](https://www.packer.io)
-- [Virtualbox](https://www.virtualbox.org)
+- KVM/QEMU
 
 ## Usage
 
-### Building a box
+There are two ways to use this repository:
 
-To build a [Vagrant](https://www.vagrantup.com) box with [Packer](https://packer.io)
-for [Virtualbox](https://www.virtualbox.org):
+- Local builds
+- CI builds
 
-#### Select distro
+### Local builds
 
-Choose which distro you are interested in building.
+There are several ways to perform a local build. Most commonly you will need to run an individual build to troubleshoot. This can be done as follows:
 
-#### Build distro
-
-> NOTE: This example we will have chosen Ubuntu Xenial
-
-```bash
-cd Ubuntu/xenial64/server
-TMPDIR=/virtual_machines/tmp/ packer build -var-file=../../../private_vars.json -var-file=ubuntu1604.json ../../ubuntu-server.json
+```shell
+$ git clone https://github.com/rcbops/ironic_factory
+$ cd ironic_factory
+$ cd Ubuntu/bionic64/server
+$ ./build.sh
 ```
 
-Now watch your build kick off and run through the building process. Once it has
-completed you will be ready to test it out.
+In the above commands, you will need to change the path from `Ubuntu/bionic64/server` to whatever OS and version you are troubleshooting. Optionally, you can add `PACKER_LOG=1` to the build command for more verbose output.
 
-### Testing a box
+During the build process, Packer starts a VNC server, which can be connected to for troubleshooting. The following output will tell you which port to connect to:
 
-Once your build has completed you are ready to test it out.
-
-#### Add box to Vagrant
-
-> Note: The number at the end is the epoch time of the build. Replace this accordingly.
-
-```bash
-cd Ubuntu/xenial64/server
-vagrant box add xenial64-server-packer-template-virtualbox-1542509766 xenial64-server-packer-template-virtualbox-1542509766.box
+```shell
+2019-06-24T10:54:58-05:00:     qemu: The VM will be run headless, without a GUI. If you want to
+qemu: view the screen of the VM, connect via VNC without a password to
+qemu: vnc://0.0.0.0:5980
 ```
 
-#### Create Vagrantfile
+Additionally, you can run all of the builds at once using the included `utils.py` script as follows:
 
-```bash
-cd ~
-mkdir -p packer/vagrant/xenial64-server
-cd packer/vagrant/xenial64-server
-vagrant init xenial64-server-packer-template-virtualbox-1542509766
+```shell
+$ python utils.py build_all
 ```
 
-#### Spin it up
+### CI builds
 
-```bash
-vagrant up
+This repository also contains a configuration for scheduled builds using CircleCI. The configuration can be found at `.circleci/config.yml` and will need to be adjusted for your particular setup.
+
+Within the `.circleci/ansible` folder are jobs to create an OnMetal host on the Rackspace Cloud that CircleCI then uses to perform the builds. Once a build is complete, the image is pushed to Rackspace Cloud Files with the following folder structure:
+
+```shell
+... snip ...
+├── Ubuntu
+│   ├── bionic64
+│   │   ├── 2019-06-24
+|   │   │   ├── desktop
+|   |   |   |    └── ubuntu-bionic64-desktop.qcow2
+|   │   │   └── server
+|   |   |        └── ubuntu-bionic64-server.qcow2
+│   ├── cosmic64
+│   │   ├── 2019-06-24
+|   │   │   ├── desktop
+|   |   |   |    └── ubuntu-cosmic64-desktop.qcow2
+|   │   │   └── server
+|   |   |        └── ubuntu-cosmic64-server.qcow2
+|   ├── ubuntu-bionic64-server.qcow2
+|   └── Ubuntu-cosmic64-server.qcow2
+... snip ...
 ```
 
-#### Test it out
-
-```bash
-vagrant ssh
-```
-
-Now do some basic tests to validate all is good.
-
-#### Tear it down
-
-```bash
-vagrant destroy -f
-```
-
-### Cleaning up
-
-When you need to clean up any of the lingering files/folers generated during
-building, you can execute the [cleanup_builds.sh](cleanup_builds.sh) script.
-
-### Using pre-built and ready for consumption Vagrant templates
-
-The majority of these templates are used to populate my [vagrant-box-templates](https://github.com/mrlesmithjr/vagrant-box-templates) repo. I would highly
-recommend leveraging this repo for testing and etc.
+The files at the root of a given distribution's folder are pointers to the most recent build for that distribution. This is done by setting the `X-Object-Manifest` header for that file.
 
 ## License
 
 MIT
 
 ## Author Information
+
+Cody Bunch
+
+- [@cody_bunch](https://www.twitter.com/cody_bunch)
+- [vBrownBag](https://vbrownbag.com)
+- [bunchc@gmail.com](mailto:bunchc@gmail.com)
 
 Larry Smith Jr.
 
