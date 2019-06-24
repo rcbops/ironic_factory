@@ -265,7 +265,7 @@ workflows:
   build-and-test:
     triggers:
       - schedule:
-          cron: "0 0 4 1/14 * ? *"
+          cron: "15 03 1,15 * *"
           filters:
             branches:
               only:
