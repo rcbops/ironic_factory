@@ -14,14 +14,14 @@
     "vm_memory": "8196",
     "vm_name": "",
     "vm_ssh_password": "vagrant",
-    "vm_ssh_username": "vagrant",
+    "vm_ssh_username": "root",
     "vm_vcpu": "1"
   },
   "builders": [
     {
       "accelerator": "kvm",
       "boot_command": [
-        "<enter><wait10><wait10><wait10>",
+        "<enter><wait1m>",
         "/usr/bin/curl -O http://{{ .HTTPIP }}:{{ .HTTPPort }}/arch/bootstrap.sh<enter><wait5>",
         "/usr/bin/bash ./bootstrap.sh<enter>"
       ],
@@ -109,34 +109,15 @@
       "type": "shell",
       "scripts": [
         "scripts/base.sh",
-        "scripts/vagrant.sh",
         "scripts/virtualbox.sh",
         "scripts/vmware.sh",
         "scripts/cleanup.sh",
         "scripts/zerodisk.sh"
       ]
+    },
+    {
+      "type": "ansible",
+      "playbook_file": "ansible/cleanup.yml"
     }
-  ],
-  "post-processors": [
-    [
-      {
-        "compression_level": "{{ user `compression_level` }}",
-        "output": "{{ user `vm_name` }}-{{.Provider}}-{{ isotime \"2006-01-02\" }}.box",
-        "type": "vagrant",
-        "keep_input_artifact": true
-      },
-      {
-        "type": "vagrant-cloud",
-        "box_tag": "{{ user `box_tag` }}",
-        "access_token": "{{ user `vagrant_cloud_token` }}",
-        "version": "{{ isotime \"2006-01-02\" }}",
-        "keep_input_artifact": true
-      },
-      {
-        "type": "manifest",
-        "output": "manifest.json",
-        "strip_path": true
-      }
-    ]
   ]
 }

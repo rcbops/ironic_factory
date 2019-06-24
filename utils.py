@@ -33,8 +33,11 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 def main():
     """Main program execution."""
     args = parse_args()
-    username, vagrant_cloud_token = private_vars()
-    decide_action(args, username, vagrant_cloud_token)
+    if args.action == 'cleanup_builds':
+        cleanup_builds()
+    else:
+        username, vagrant_cloud_token = private_vars()
+        decide_action(args, username, vagrant_cloud_token)
 
 
 def private_vars():

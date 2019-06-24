@@ -6,8 +6,8 @@ set -e
 set -x
 
 CHROOT_DIR="/mnt"
-DISK="/dev/sda"
-ROOT_PART="/dev/sda1"
+DISK="/dev/vda"
+ROOT_PART="/dev/vda1"
 MIRRORLIST="https://www.archlinux.org/mirrorlist/?country=US&protocol=http&protocol=https&ip_version=4&use_mirror_status=on"
 PASSWORD=$(/usr/bin/openssl passwd -crypt 'vagrant')
 
@@ -37,7 +37,7 @@ echo -e "Bootstrapping base installation..."
 /usr/bin/pacstrap $CHROOT_DIR base base-devel
 /usr/bin/arch-chroot $CHROOT_DIR pacman -S --noconfirm facter gptfdisk openssh syslinux
 /usr/bin/arch-chroot $CHROOT_DIR syslinux-install_update -i -a -m
-/usr/bin/sed -i "s|sda3|sda1|" "$CHROOT_DIR/boot/syslinux/syslinux.cfg"
+/usr/bin/sed -i "s|sda3|vda1|" "$CHROOT_DIR/boot/syslinux/syslinux.cfg"
 /usr/bin/sed -i "s/TIMEOUT 50/TIMEOUT 10/" "$CHROOT_DIR/boot/syslinux/syslinux.cfg"
 
 echo -e "Generating filesystem table..."
@@ -64,17 +64,8 @@ cat <<-EOF > "$CHROOT_DIR/usr/local/bin/arch-config.sh"
     fi
     /usr/bin/ln -s '/usr/lib/systemd/system/dhcpcd@.service' '/etc/systemd/system/multi-user.target.wants/dhcpcd@eth0.service'
     /usr/bin/sed -i 's/#UseDNS yes/UseDNS no/' /etc/ssh/sshd_config
+    /usr/bin/sed -i '/\(\#\|^\)PermitRootLogin/c PermitRootLogin yes' /etc/ssh/sshd_config
     /usr/bin/systemctl enable sshd.service
-
-    echo -e "Configuring Vagrant specific settings..."
-    /usr/bin/useradd --password $PASSWORD --comment 'Vagrant User' --create-home --user-group vagrant
-    echo 'Defaults env_keep += "SSH_AUTH_SOCK"' > /etc/sudoers.d/10_vagrant
-    echo 'vagrant ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers.d/10_vagrant
-    /usr/bin/chmod 0440 /etc/sudoers.d/10_vagrant
-    /usr/bin/install --directory --owner=vagrant --group=vagrant --mode=0700 /home/vagrant/.ssh
-    /usr/bin/curl --output /home/vagrant/.ssh/authorized_keys --location https://raw.github.com/mitchellh/vagrant/master/keys/vagrant.pub
-    /usr/bin/chown vagrant:vagrant /home/vagrant/.ssh/authorized_keys
-    /usr/bin/chmod 0600 /home/vagrant/.ssh/authorized_keys
 
     echo -e "Cleaning up..."
     /usr/bin/pacman -Rcns --noconfirm gptfdisk

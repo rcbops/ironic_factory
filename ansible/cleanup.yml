@@ -1,0 +1,33 @@
+---
+- name: Cleanup accounts
+  hosts: all
+  gather_facts: true
+  become: true
+  tasks:
+    - name: Reset root password
+      user:
+        name: root
+        password: "!"
+        update_password: always
+        shell: /usr/sbin/nologin
+    - name: Disable root SSH access
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        state: present
+        regexp: "^PermitRootLogin"
+        line: "PermitRootLogin no"
+    - name: Shutdown server (Arch)
+      command: systemctl isolate poweroff.target
+      sudo: yes
+      when: ansible_distribution == 'Arch'
+    - name: Shutdown server (Alpine)
+      command: /sbin/poweroff
+      when: ansible_distribution == 'Alpine'
+    - name: Shutdown server (Debian, Ubuntu, CentOS)
+      command: "echo '/sbin/halt -h -p' > shutdown.sh; echo 'packer'|sudo -S bash 'shutdown.sh'"
+      sudo: yes
+      when: >
+        ansible_distribution == 'Debian' or
+        ansible_distribution == 'Ubuntu' or
+        ansible_distribution == 'CentOS'
+
