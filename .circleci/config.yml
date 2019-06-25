@@ -1,15 +1,13 @@
 ## Required ENV variables in CircleCI account:
 # RACKSPACE_API_TOKEN
-# RACKSPACE_PROJECT_ID
+# RACKSPACE_USERNAME
 # RACKSPACE_SSH_PUB_KEY
-# VAGRANT_CLOUD_TOKEN
-# GITHUB_TOKEN
 
 # Default YAML anchor, re-used in all CircleCI jobs
 _job_defaults: &job_defaults
   working_directory: ~/images
   docker:
-    - image: st2opsadmin/ovabuild-circle
+    - image: bunchc/ironic_factory
       environment:
         IMAGE_DATE: "`date --iso-8601`"
 
@@ -38,7 +36,6 @@ commands:
   #
   # This requires the following ENV variables in CircleCI:
   # RACKSPACE_API_TOKEN
-  # RACKSPACE_PROJECT_ID
   # RACKSPACE_USERNAME
   # RACKSPACE_REGION
   upload-cloudfiles:

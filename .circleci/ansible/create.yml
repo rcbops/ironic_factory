@@ -12,16 +12,20 @@
     - name: Add SSH key to Rackspace account
       local_action:
         module: rax_keypair
-        credentials: ~/.rack/config
-        region: IAD
+        api_key: "{{ lookup('env', 'RACKSPACE_API_TOKEN') }}"
+        username: "{{ lookup('env', 'RACKSPACE_USERNAME') }}"
+        region: "{{ lookup('env', 'RACKSPACE_REGION') }}"
         name: "Cody - Image Factory Test Key"
-        public_key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+        public_key: "{{ lookup('env', 'RACKSPACE_SSH_PUB_KEY') }}"
 
     - name: "Create server"
       local_action:
         module: rax
         image: 03cc1fe2-b597-406c-a7b1-22b2a57850cf
-        region: IAD
+        api_key: "{{ lookup('env', 'RACKSPACE_API_TOKEN') }}"
+        username: "{{ lookup('env', 'RACKSPACE_USERNAME') }}"
+        region: "{{ lookup('env', 'RACKSPACE_REGION') }}"
+        tenant_id: "{{ lookup('env', 'RACKSPACE_TENANT_ID') }}"
         user_data: |
             #cloud-config
             users:
@@ -29,7 +33,6 @@
                 sudo: ALL=(ALL) NOPASSWD:ALL
         flavor: onmetal-io2
         wait: yes
-        credentials: ~/.rack/config
         name:  "Cody-test-{{ lookup('env', 'CIRCLE_SHA1')|truncate(8,True,'') }}{{ '%Y%m%d%H%M%S'|strftime }}"
         state: present
         wait_timeout: 600
@@ -64,8 +67,8 @@
 
     - name: Wait for SSH
       wait_for:
-        delay: 1
+        delay: 120
         host: "{{ rackspace.instances[0].rax_accessipv4 }}"
         port: 22
         state: started
-        timeout: 120
+        timeout: 600
