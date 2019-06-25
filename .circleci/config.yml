@@ -179,8 +179,8 @@ workflows:
           branches:
             only:
             - master
-        requires:
-        - validate-upstream
+#        requires:
+#        - validate-upstream
     - provision-metal:
         filters:
           branches:
