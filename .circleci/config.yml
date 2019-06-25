@@ -87,13 +87,13 @@ jobs:
         at: ~/images
     - run:
         command: |
-          packer build \\
-            -machine-readable \\
-            -only=qemu \\
-            -except=vagrant,vagrant-cloud,shell,manifests \\
-            -var-file="Alpine/3.9/server/box-info.json" \\
-            -var-file="Alpine/3.9/server/template.json" \\
-            -var-file="private-vars.json" \\
+          packer build \
+            -machine-readable \
+            -only=qemu \
+            -except=vagrant,vagrant-cloud,shell,manifests \
+            -var-file="Alpine/3.9/server/box-info.json" \
+            -var-file="Alpine/3.9/server/template.json" \
+            -var-file="private-vars.json" \
             Alpine-server.json
     - run:
         name: Uploading Alpine/3.9/server/output-3.9-server-template-qemu-${IMAGE_DATE}
@@ -102,13 +102,13 @@ jobs:
         working_directory: .circleci/ansible/
     - run:
         command: |
-          packer build \\
-            -machine-readable \\
-            -only=qemu \\
-            -except=vagrant,vagrant-cloud,shell,manifests \\
-            -var-file="CentOS/7/server/box-info.json" \\
-            -var-file="CentOS/7/server/template.json" \\
-            -var-file="private-vars.json" \\
+          packer build \
+            -machine-readable \
+            -only=qemu \
+            -except=vagrant,vagrant-cloud,shell,manifests \
+            -var-file="CentOS/7/server/box-info.json" \
+            -var-file="CentOS/7/server/template.json" \
+            -var-file="private-vars.json" \
             CentOS-server.json
     - run:
         name: Uploading CentOS/7/server/output-7-server-template-qemu-${IMAGE_DATE}
@@ -117,13 +117,13 @@ jobs:
         working_directory: .circleci/ansible/
     - run:
         command: |
-          packer build \\
-            -machine-readable \\
-            -only=qemu \\
-            -except=vagrant,vagrant-cloud,shell,manifests \\
-            -var-file="Ubuntu/bionic64/server/box-info.json" \\
-            -var-file="Ubuntu/bionic64/server/template.json" \\
-            -var-file="private-vars.json" \\
+          packer build \
+            -machine-readable \
+            -only=qemu \
+            -except=vagrant,vagrant-cloud,shell,manifests \
+            -var-file="Ubuntu/bionic64/server/box-info.json" \
+            -var-file="Ubuntu/bionic64/server/template.json" \
+            -var-file="private-vars.json" \
             Ubuntu-server.json
     - run:
         name: Uploading Ubuntu/bionic64/server/output-bionic64-server-template-qemu-${IMAGE_DATE}
@@ -145,6 +145,7 @@ jobs:
         command: ansible-playbook -v -i inventory destroy.yml
         working_directory: .circleci/ansible/
 workflows:
+  version: 2
   cleanup-cloud-instances:
     triggers:
     - schedule:
@@ -201,7 +202,7 @@ workflows:
             - master
         requires:
         - run-builds
-  version: 2
+
 
 # Original config.yml file:
 # ## Required ENV variables in CircleCI account:
