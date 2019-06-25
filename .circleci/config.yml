@@ -161,19 +161,19 @@ workflows:
             only:
             - master
   build-and-test:
-    triggers:
-    - schedule:
-        cron: 15 03 1,15 * *
-        filters:
-          branches:
-            only:
-            - master
+#    triggers:
+#    - schedule:
+#        cron: 15 03 1,15 * *
+#        filters:
+#          branches:
+#            only:
+#            - master
     jobs:
-    - validate-upstream:
-        filters:
-          branches:
-            only:
-            - master
+#    - validate-upstream:
+#        filters:
+#          branches:
+#            only:
+#            - master
     - create-metal:
         filters:
           branches:
