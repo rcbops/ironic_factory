@@ -1,4 +1,5 @@
 ---
+version: 2.1
 ## Required ENV variables in CircleCI account:
 # RACKSPACE_API_TOKEN
 # RACKSPACE_USERNAME
@@ -30,7 +31,7 @@ _image_defaults: &image_defaults
   scan: false
   upload: true
 
-version: 2.1
+
 commands:
   # upload-cloudfiles
   # When invoked, uploads the produced image to Cloud Files
