@@ -1,3 +1,4 @@
+---
 ## Required ENV variables in CircleCI account:
 # RACKSPACE_API_TOKEN
 # RACKSPACE_USERNAME
