@@ -38,4 +38,4 @@ RUN echo "===> Adding Ansible's PPA..." \
    &&  echo 'localhost' > /etc/ansible/hosts
 CMD ["ansible-playbook" "--version"]
 RUN pip install --upgrade pip
-RUN pip install --upgrade paramiko fabric packet-python python-dateutil
+RUN pip install --upgrade paramiko fabric packet-python python-dateutil jmespath
