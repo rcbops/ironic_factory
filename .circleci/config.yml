@@ -125,7 +125,7 @@ commands:
             name: Run Packer with Ansible
             command: >
               ansible-playbook -v -i inventory \
-                --extra-vars "builders=<< parameters.builders >>"" \
+                --extra-vars "builders=<< parameters.builders >>" \
                 --extra-vars "skip_post_processors=<< parameters.skip-post-processors >>" \
                 --extra-vars "box_info_path=<< parameters.os >>/<< parameters.version >>/<< parameters.server >>/box-info.json" \
                 --extra-vars "template_path=<< parameters.os >>/<< parameters.version >>/<< parameters.server >>/template.json" \
