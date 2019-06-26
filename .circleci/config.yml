@@ -121,6 +121,9 @@ commands:
         type: boolean
         default: false
     steps:
+        - checkout
+        - attach_workspace:
+            at: ~/images
         - run:
             name: Run Packer with Ansible
             command: >
@@ -131,6 +134,7 @@ commands:
                 --extra-vars "template_path=<< parameters.os >>/<< parameters.version >>/<< parameters.server >>/template.json" \
                 --extra-vars "packer_template=<< parameters.os >>-<< parameters.server >>.json" \
                 run-packer.yml
+            working_directory: .circleci/ansible/
         - when:
             condition: << parameters.upload >>
             steps:
@@ -191,6 +195,11 @@ jobs:
           command: rsync -avz -e 'ssh -o StrictHostKeyChecking=no' . root@metal:/home/images/
           environment:
             HOSTALIASES: .circleci/ansible/.hosts
+      - persist_to_workspace:
+          root: ~/images
+          paths:
+            - .circleci/ansible/.hosts
+            - .circleci/ansible/inventory
       - run:
           <<: *destroy_device
           when: on_fail
