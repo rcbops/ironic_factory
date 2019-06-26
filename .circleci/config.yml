@@ -50,10 +50,18 @@ commands:
         type: string
         default: ""
     steps:
+      - checkout
+      - attach_workspace:
+          at: ~/images
       - run:
           name: Uploading << parameters.source-path >> to Cloud Files
-          command: ansible-playbook -v -i inventory upload-image.yml
+          command: |
+            ansible-playbook -v -i inventory \
+              --extra-vars "source_image=<< parameters.source-path >>" \
+              --extra-vars "dest_path=<< parameters.dest-path >>" \
+              upload-image.yml
           working_directory: .circleci/ansible/
+          no_output_timeout: 2h
   # runbuild
   # When supplied with parameters for an OS will run `packer build` for that OS
   # 
@@ -143,8 +151,10 @@ commands:
             condition: << parameters.upload >>
             steps:
               - upload-cloudfiles:
-                  source-path: "<< parameters.os >>/<< parameters.version >>/<< parameters.server >>/output-<< parameters.version >>-<< parameters.server >>-template-<< parameters.builders >>-${IMAGE_DATE}" 
-                dest-path: "cloud files path?"
+                  environment:
+                    IMAGE_DATE: "`date --iso-8601`"
+                  source-path: "/home/images/<< parameters.os >>/<< parameters.version >>/<< parameters.server >>/output/<< parameters.os >><< parameters.version >>-$IMAGE_DATE.qcow2" 
+                  dest-path: "<< parameters.os>>/<< parameters.version >>/$IMAGE_DATE/<< parameters.os >><< parameters.version >>-$IMAGE_DATE.qcow2"
 
 
 jobs:
