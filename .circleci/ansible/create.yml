@@ -51,10 +51,8 @@
               metal:
                 ansible_host: {{ rackspace.instances[0].rax_accessipv4 }}
                 ansible_port: 22
-            vars:
-              # disable SSH host key checking
-              ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
-              rackspace_device_id: {{ rackspace.instances[0].id }}
+                ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
+                rackspace_device_id: {{ rackspace.instances[0].id }}
 
     - name: Create HOSTALIASES .hosts file, - a dynamic alternative of /etc/hosts
       blockinfile:
