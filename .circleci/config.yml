@@ -8,8 +8,8 @@ _job_defaults: &job_defaults
   working_directory: ~/images
   docker:
     - image: bunchc/ironic_factory
-      environment:
-        IMAGE_DATE: "`date --iso-8601`"
+  environment:
+    IMAGE_DATE: "`date --iso-8601`"
 
 # Re-used in jobs to terminate the Rackspace bare-metal device
 _destroy_device: &destroy_device
@@ -151,8 +151,6 @@ commands:
             condition: << parameters.upload >>
             steps:
               - upload-cloudfiles:
-                  environment:
-                    IMAGE_DATE: "`date --iso-8601`"
                   source-path: "/home/images/<< parameters.os >>/<< parameters.version >>/<< parameters.server >>/output/<< parameters.os >><< parameters.version >>-$IMAGE_DATE.qcow2" 
                   dest-path: "<< parameters.os>>/<< parameters.version >>/$IMAGE_DATE/<< parameters.os >><< parameters.version >>-$IMAGE_DATE.qcow2"
 
