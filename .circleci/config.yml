@@ -130,7 +130,7 @@ commands:
                 --extra-vars "box_info_path=<< parameters.os >>/<< parameters.version >>/<< parameters.server >>/box-info.json" \
                 --extra-vars "template_path=<< parameters.os >>/<< parameters.version >>/<< parameters.server >>/template.json" \
                 --extra-vars "packer_template=<< parameters.os >>-<< parameters.server >>.json" \
-                run_packer.yml
+                run-packer.yml
         - when:
             condition: << parameters.upload >>
             steps:
