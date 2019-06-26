@@ -275,7 +275,7 @@ workflows:
 #              only:
 #                - master
       - create-metal:
-          requires:
+#          requires:
 #            - validate-upstream
           filters:
             branches:
