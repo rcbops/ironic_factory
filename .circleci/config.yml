@@ -138,6 +138,7 @@ commands:
                 --extra-vars "template_path=template.json" \
                 run-packer.yml
             working_directory: .circleci/ansible/
+            no_output_timeout: 2h
         - when:
             condition: << parameters.upload >>
             steps:
