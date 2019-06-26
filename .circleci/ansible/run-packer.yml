@@ -1,0 +1,19 @@
+---
+- hosts: all
+  strategy: free
+  tasks:
+    # Run Packer
+    - name: Running packer build
+      become: true
+      command: >
+          packer build \
+            -machine-readable \
+            -only={{ builders }} \
+            -except={{ skip_post_processors }} \
+            -var-file="{{ box_info_path }}" \
+            -var-file="{{ template_path }}" \
+            "{{ packer_template }}".json
+      when: ansible_os_family == "Debian"
+      register: packer_run
+      retries: 3
+      delay: 10

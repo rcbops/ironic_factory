@@ -12,9 +12,7 @@
         api_key: "{{ lookup('env', 'RACKSPACE_API_TOKEN') }}"
         username: "{{ lookup('env', 'RACKSPACE_USERNAME') }}"
         region: "{{ lookup('env', 'RACKSPACE_REGION') }}"
-        tenant_id: "{{ lookup('env', 'RACKSPACE_TENANT_ID') }}"
         container: "Cody-Test-Ironic-Images"
-        region: IAD
         state: present
     - name: "Upload Ironic image"
       local_action:
@@ -25,7 +23,6 @@
         tenant_id: "{{ lookup('env', 'RACKSPACE_TENANT_ID') }}"
         container: "Cody-Test-Ironic-Images"
         src: "/virtual_machines/packer-templates/bionic64-server-packer-template-2019-06-20.qcow2"
-        region: IAD
         method: put
     - name: "Upload Ironic image"
       local_action:
@@ -37,7 +34,6 @@
         container: "Cody-Test-Ironic-Images"
         src: "/virtual_machines/packer-templates/bionic64-server-packer-template-2019-06-20.qcow2"
         dest: "Ubuntu/bionic64-server-packer-template-2019-06-20.qcow2"
-        region: IAD
         method: put
     - name: "Clean out container"
       local_action:
@@ -47,5 +43,4 @@
         region: "{{ lookup('env', 'RACKSPACE_REGION') }}"
         tenant_id: "{{ lookup('env', 'RACKSPACE_TENANT_ID') }}"
         container: "Cody-Test-Ironic-Images"
-        region: IAD
         method: delete

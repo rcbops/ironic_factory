@@ -1,0 +1,30 @@
+---
+- name:
+    Delete a Rackspace cloud server.
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Install Rackspace module dependencies
+      pip:
+        name: pyrax
+
+    - name: Read inventory file
+      include_vars:
+        file: '{{ playbook_dir }}/inventory'
+        name: imported_vars
+
+    - name: Delete the servers
+      local_action:
+        module: rax
+        api_key: "{{ lookup('env', 'RACKSPACE_API_TOKEN') }}"
+        username: "{{ lookup('env', 'RACKSPACE_USERNAME') }}"
+        region: "{{ lookup('env', 'RACKSPACE_REGION') }}"
+        instance_ids: "{{ item }}"
+        state: absent
+        wait: yes
+        wait_timeout: 600
+      register: rackspace_del
+      retries: 5
+      delay: 10
+      until: rackspace_del is succeeded
+      with_items: "{{ imported_vars | json_query('all.hosts.*.rackspace_device_id') }}"
