@@ -12,7 +12,7 @@
             -except={{ skip_post_processors }} \
             -var-file="{{ build_path }}/{{ build_version }}/{{ build_type }}/{{ box_info_path }}" \
             -var-file="{{ build_path }}/{{ build_version }}/{{ build_type }}/{{ template_path }}" \
-            "{{ build_path }}/{{ build_os|lower }}-{{ build-type }}".json
+            "{{ build_path }}/{{ build_os|lower }}-{{ build_type }}".json
       when: ansible_os_family == "Debian"
       register: packer_run
       retries: 3
