@@ -58,7 +58,7 @@ commands:
           command: |
             ansible-playbook -v -i inventory \
               --extra-vars "source_image=<< parameters.source-path >>" \
-              --extra-vars "dest_path=<< parameters.dest-path >>" \
+              --extra-vars "dest_file=<< parameters.dest-path >>" \
               upload-image.yml
           working_directory: .circleci/ansible/
           no_output_timeout: 2h
