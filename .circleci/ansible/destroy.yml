@@ -12,6 +12,11 @@
       include_vars:
         file: '{{ playbook_dir }}/inventory'
         name: imported_vars
+    
+    - name: Print server ID
+      debug:
+        msg: "Rackspace ID {{ item }}"
+      with_items: "{{ imported_vars | json_query('all.hosts.*.rackspace_device_id') }}"
 
     - name: Delete the servers
       local_action:

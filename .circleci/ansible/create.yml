@@ -26,11 +26,6 @@
         username: "{{ lookup('env', 'RACKSPACE_USERNAME') }}"
         region: "{{ lookup('env', 'RACKSPACE_REGION') }}"
         tenant_id: "{{ lookup('env', 'RACKSPACE_TENANT_ID') }}"
-        user_data: |
-            #cloud-config
-            users:
-              - name: ova
-                sudo: ALL=(ALL) NOPASSWD:ALL
         flavor: onmetal-io2
         wait: yes
         name:  "Cody-test-{{ lookup('env', 'CIRCLE_SHA1')|truncate(8,True,'') }}{{ '%Y%m%d%H%M%S'|strftime }}"
@@ -41,6 +36,10 @@
       retries: 5
       delay: 10
       until: rackspace is succeeded
+
+    - name: Print rackspace variable
+      debug:
+        msg: "{{ rackspace }}"
 
     - name: Create inventory file with Rackspace server device details
       blockinfile:
