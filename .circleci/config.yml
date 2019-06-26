@@ -222,6 +222,9 @@ jobs:
           builders: "qemu"
           scan: false
           upload: true
+      - run:
+          <<: *destroy_device
+          when: on_fail
 
   # Destroy the created Packet.net bare metal device.
   destroy-metal:
