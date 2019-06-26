@@ -14,7 +14,7 @@ _job_defaults: &job_defaults
 # Re-used in jobs to terminate the Rackspace bare-metal device
 _destroy_device: &destroy_device
   name: Destroy metal device on failure
-  command: ansible-playbook -v -i inventory destroy.yml
+  command: ansible-playbook -vvvvv -i inventory destroy.yml
   working_directory: .circleci/ansible/
 
 # Defines default values for building an image.
