@@ -127,14 +127,17 @@ commands:
         - run:
             name: Run Packer with Ansible
             command: >
-              ansible-playbook -v -i .circleci/ansible/inventory \
+              ansible-playbook -v -i inventory \
                 --extra-vars "builders=<< parameters.builders >>" \
-                --extra-vars "skip_post_processors=<< parameters.skip-post-processors >>" \
-                --extra-vars "box_info_path=<< parameters.os >>/<< parameters.version >>/<< parameters.server >>/box_info.json" \
-                --extra-vars "template_path=<< parameters.os >>/<< parameters.version >>/<< parameters.server >>/template.json" \
-                --extra-vars "packer_template=<< parameters.os >>-<< parameters.server >>.json" \
-                .circleci/ansible/run-packer.yml
-            #working_directory: .circleci/ansible/
+                --extra-vars "build_path=/home/images/<< parameters.os >>/" \
+                --extra-vars "build_os=<< parameters.os >>" \
+                --extra-vars "build_version=<< parameters.version >>" \
+                --extra-vars "build_type=<< parameters.server >>" \
+                --extra-vars "skip_post_processors=/home/images/<< parameters.skip-post-processors >>" \
+                --extra-vars "box_info_path=box_info.json" \
+                --extra-vars "template_path=template.json" \
+                run-packer.yml
+            working_directory: .circleci/ansible/
         - when:
             condition: << parameters.upload >>
             steps:
