@@ -154,7 +154,7 @@ commands:
             condition: << parameters.upload >>
             steps:
               - upload-cloudfiles:
-                  source-path: "/home/images/<< parameters.os >>/<< parameters.version >>/<< parameters.server >>/output/<< parameters.os >>-<< parameters.version >>"
+                  source-path: "/home/images/<< parameters.os >>/<< parameters.version >>/<< parameters.server >>/output"
                   dest-file: "<< parameters.os >>-<< parameters.version >>"
                   dest-path: "<< parameters.os >>/<< parameters.version >>/"
 
