@@ -5,5 +5,5 @@
   "iso_checksum_type": "sha1",
   "iso_url": "https://arch.mirror.constant.com/iso/2019.03.01/archlinux-2019.03.01-x86_64.iso",
   "iso_checksum_url": "https://arch.mirror.constant.com/iso/2019.03.01/sha1sums.txt",
-  "vm_name": "arch20190301-server-packer-template"
+  "vm_name": "arch20190301.qcow2"
 }

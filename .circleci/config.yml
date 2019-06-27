@@ -140,11 +140,11 @@ commands:
             command: >
               ansible-playbook -v -i inventory \
                 --extra-vars "builders=<< parameters.builders >>" \
-                --extra-vars "build_path=/home/images/<< parameters.os >>/" \
+                --extra-vars "build_path=/virtual_machines/images/<< parameters.os >>/" \
                 --extra-vars "build_os=<< parameters.os >>" \
                 --extra-vars "build_version=<< parameters.version >>" \
                 --extra-vars "build_type=<< parameters.server >>" \
-                --extra-vars "skip_post_processors=/home/images/<< parameters.skip-post-processors >>" \
+                --extra-vars "skip_post_processors=/virtual_machines/images/<< parameters.skip-post-processors >>" \
                 --extra-vars "box_info_path=box_info.json" \
                 --extra-vars "template_path=template.json" \
                 run-packer.yml
@@ -154,7 +154,7 @@ commands:
             condition: << parameters.upload >>
             steps:
               - upload-cloudfiles:
-                  source-path: "/home/images/<< parameters.os >>/<< parameters.version >>/<< parameters.server >>/output"
+                  source-path: "/virtual_machines/images/<< parameters.os >>/<< parameters.version >>/<< parameters.server >>/output"
                   dest-file: "<< parameters.os >>-<< parameters.version >>"
                   dest-path: "<< parameters.os >>/<< parameters.version >>/"
 
@@ -209,7 +209,7 @@ jobs:
           no_output_timeout: 1h
       - run:
           name: Sync git workspace to metal server
-          command: rsync -avz -e 'ssh -o StrictHostKeyChecking=no' . root@metal:/home/images/
+          command: rsync -avz -e 'ssh -o StrictHostKeyChecking=no' . root@metal:/virtual_machines/images/
           environment:
             HOSTALIASES: .circleci/ansible/.hosts
           no_output_timeout: 20m

@@ -4,5 +4,5 @@
   "iso_checksum_type": "sha256",
   "iso_url": "http://cdimage.ubuntu.com/releases/18.10/release/ubuntu-18.10-server-amd64.iso",
   "iso_checksum_url": "http://cdimage.ubuntu.com/releases/18.10/release/SHA256SUMS",
-  "vm_name": "cosmic64-server-packer-template"
+  "vm_name": "cosmic64.qcow2"
 }

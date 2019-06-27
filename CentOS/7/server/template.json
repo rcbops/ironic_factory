@@ -5,5 +5,5 @@
   "iso_url": "http://centos.mirror.constant.com/7.6.1810/isos/x86_64/CentOS-7-x86_64-Minimal-1810.iso",
   "iso_checksum_url": "http://centos.mirror.constant.com/7.6.1810/isos/x86_64/sha256sum.txt",
   "kickstart_cfg": "ks.cfg",
-  "vm_name": "centos7-server-packer-template"
+  "vm_name": "centos7.qcow2"
 }

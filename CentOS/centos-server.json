@@ -34,13 +34,13 @@
       "iso_checksum": "{{ user `iso_checksum` }}",
       "iso_url": "{{ user `iso_url` }}",
       "memory": "{{ user `vm_memory` }}",
-      "output_directory": "output-{{ user `vm_name` }}-{{ build_type }}-{{ isotime \"2006-01-02\" }}",
+      "output_directory": "output",
       "shutdown_command": "echo '/sbin/halt -h -p' > shutdown.sh; echo 'packer'|sudo -S bash 'shutdown.sh'",
       "ssh_password": "{{ user `vm_ssh_password` }}",
       "ssh_username": "{{ user `vm_ssh_username` }}",
       "ssh_wait_timeout": "30m",
       "type": "qemu",
-      "vm_name": "{{ user `vm_name` }}-{{ isotime \"2006-01-02\" }}.qcow2",
+      "vm_name": "{{ user `vm_name` }}",
       "vnc_bind_address": "0.0.0.0"
     },
     {
@@ -57,13 +57,13 @@
       "iso_checksum": "{{ user `iso_checksum` }}",
       "iso_url": "{{ user `iso_url` }}",
       "memory": "{{ user `vm_memory` }}",
-      "output_directory": "output-{{ user `vm_name` }}-{{ build_type }}-{{ isotime \"2006-01-02\" }}",
+      "output_directory": "output",
       "shutdown_command": "echo '/sbin/halt -h -p' > shutdown.sh; echo 'packer'|sudo -S bash 'shutdown.sh'",
       "ssh_password": "{{ user `vm_ssh_password` }}",
       "ssh_username": "{{ user `vm_ssh_username` }}",
       "ssh_wait_timeout": "30m",
       "type": "virtualbox-iso",
-      "vm_name": "{{ user `vm_name` }}-{{ isotime \"2006-01-02\" }}"
+      "vm_name": "{{ user `vm_name` }}"
     },
     {
       "boot_command": [
@@ -80,14 +80,14 @@
       "iso_checksum": "{{ user `iso_checksum` }}",
       "iso_url": "{{ user `iso_url` }}",
       "memory": "{{ user `vm_memory` }}",
-      "output_directory": "output-{{ user `vm_name` }}-{{ build_type }}-{{ isotime \"2006-01-02\" }}",
+      "output_directory": "output",
       "shutdown_command": "echo '/sbin/halt -h -p' > shutdown.sh; echo 'packer'|sudo -S bash 'shutdown.sh'",
       "ssh_password": "{{ user `vm_ssh_password` }}",
       "ssh_username": "{{ user `vm_ssh_username` }}",
       "ssh_wait_timeout": "30m",
       "tools_upload_flavor": "linux",
       "type": "vmware-iso",
-      "vm_name": "{{ user `vm_name` }}-{{ isotime \"2006-01-02\" }}",
+      "vm_name": "{{ user `vm_name` }}",
       "vmx_data": {
         "ethernet0.pciSlotNumber": "32"
       },

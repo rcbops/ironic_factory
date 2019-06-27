@@ -4,5 +4,5 @@
   "iso_checksum_type": "sha256",
   "iso_url": "http://releases.ubuntu.com/xenial/ubuntu-16.04.6-server-amd64.iso",
   "iso_checksum_url": "http://releases.ubuntu.com/xenial/SHA256SUMS",
-  "vm_name": "xenial64-desktop-packer-template"
+  "vm_name": "xenial64.qcow2"
 }
