@@ -14,8 +14,11 @@
         region: "{{ lookup('env', 'RACKSPACE_REGION') }}"
         container: "Cody-Test-Ironic-Images"
         state: present
+    - name: "What is wrong with {{ source_image|lower }}"
+      debug:
+        msg: "{{ source_image|lower }}"
     # Upload packer image to Rackspace Cloud Files
-    - name: "Upload Ironic image"
+    - name: Upload Ironic image
       local_action:
         module: rax_files_objects
         api_key: "{{ lookup('env', 'RACKSPACE_API_TOKEN') }}"
@@ -33,7 +36,7 @@
         path: "/tmp/{{ dest_file|lower }}.qcow2"
         state: touch
     # Upload the blank file and set the headers to point to our image
-    - name: "Update symlink"
+    - name: Update symlink
       local_action:
         module: rax_files_objects
         api_key: "{{ lookup('env', 'RACKSPACE_API_TOKEN') }}"

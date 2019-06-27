@@ -58,7 +58,7 @@ commands:
       - run:
           name: Uploading << parameters.source-path >> to Cloud Files
           command: |
-            ansible-playbook -v -i inventory \
+            ansible-playbook -vvvv -i inventory \
               --extra-vars "source_image=<< parameters.source-path >>" \
               --extra-vars "dest_path=<< parameters.dest-path >>" \
               --extra-vars "dest_file=<< parameters.dest-file >>" \
