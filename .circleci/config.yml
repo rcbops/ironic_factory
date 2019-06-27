@@ -68,6 +68,7 @@ commands:
   # Default values are provided for Alpine, see the `jobs:` section of this file
   # to define which builds are to be run.
   runbuild:
+    <<: *job_defaults
     description: "Runs a packer build with the given attributes"
     parameters:
       os:
@@ -149,6 +150,7 @@ commands:
             no_output_timeout: 2h
         - when:
             condition: << parameters.upload >>
+            <<: *job_defaults
             steps:
               - upload-cloudfiles:
                   source-path: "/home/images/<< parameters.os >>/<< parameters.version >>/<< parameters.server >>/output/<< parameters.os >><< parameters.version >>-$IMAGE_DATE.qcow2" 
