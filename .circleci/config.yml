@@ -155,8 +155,8 @@ commands:
             steps:
               - upload-cloudfiles:
                   source-path: "/home/images/<< parameters.os >>/<< parameters.version >>/<< parameters.server >>/output/<< parameters.os >><< parameters.version >>"
-                  dest-file: "<< parameteres.os >><< parameters.version >>"
-                  dest-path: "<< parameters.os>>/<< parameters.version >>/"
+                  dest-file: "<< parameters.os >><< parameters.version >>"
+                  dest-path: "<< parameters.os >>/<< parameters.version >>/"
 
 
 jobs:
@@ -229,7 +229,6 @@ jobs:
           at: ~/images
       # Alpine Build
       - runbuild:
-          # Build accepting all the defaults
           os: "Alpine"
           version: "3.9"
           <<: *image_defaults
@@ -243,11 +242,11 @@ jobs:
           version: "6"
           <<: *image_defaults
       - runbuild:
-          os: Debian
+          os: "Debian"
           version: "jessie64"
           <<: *image_defaults
       - runbuild:
-          os: Debian
+          os: "Debian"
           version: "stretch64"
           <<: *image_defaults
       # Ubuntu Images
