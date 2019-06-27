@@ -68,7 +68,6 @@ commands:
   # Default values are provided for Alpine, see the `jobs:` section of this file
   # to define which builds are to be run.
   runbuild:
-    <<: *job_defaults
     description: "Runs a packer build with the given attributes"
     parameters:
       os:
