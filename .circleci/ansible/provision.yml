@@ -86,9 +86,6 @@
     update_host_vars: true
   roles:
   tasks:
-    - name: Create a zfs pool on /dev/sdc and /dev/sdd
-      command: zpool create -f virtual_machines {{ disks | join (' ') }}
-  
     # Update apt-cache to ensure up to date
     - name: Updating Apt Cache (Debian)
       apt:
@@ -221,6 +218,10 @@
         version: "{{ ansible_ver }}"
       become: true
       when: ansible_os_family != "Windows"
+
+    # Setup ZFS pool on data disks for packer builds
+    - name: Create a zfs pool on /dev/sdc and /dev/sdd
+      command: zpool create -f virtual_machines {{ disks | join (' ') }}
 
 - hosts: all
   become: true
