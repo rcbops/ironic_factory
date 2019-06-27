@@ -154,8 +154,8 @@ commands:
             condition: << parameters.upload >>
             steps:
               - upload-cloudfiles:
-                  source-path: "/home/images/<< parameters.os >>/<< parameters.version >>/<< parameters.server >>/output/<< parameters.os >><< parameters.version >>"
-                  dest-file: "<< parameters.os >><< parameters.version >>"
+                  source-path: "/home/images/<< parameters.os >>/<< parameters.version >>/<< parameters.server >>/output/<< parameters.os >>-<< parameters.version >>"
+                  dest-file: "<< parameters.os >>-<< parameters.version >>"
                   dest-path: "<< parameters.os >>/<< parameters.version >>/"
 
 
@@ -206,11 +206,13 @@ jobs:
           name: Provision the bare metal server
           command: ansible-playbook -v -i inventory provision.yml
           working_directory: .circleci/ansible/
+          no_output_timeout: 1h
       - run:
           name: Sync git workspace to metal server
           command: rsync -avz -e 'ssh -o StrictHostKeyChecking=no' . root@metal:/home/images/
           environment:
             HOSTALIASES: .circleci/ansible/.hosts
+          no_output_timeout: 20m
       - persist_to_workspace:
           root: ~/images
           paths:
