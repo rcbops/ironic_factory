@@ -1,7 +1,7 @@
 ---
 - name: "Upload Ironic image to Cloud Files"
   hosts: localhost
-  gather_facts: no
+  gather_facts: yes
   tasks:
     - name: Ensure pyrax is installed
       pip:
