@@ -273,9 +273,9 @@ jobs:
           version: "xenial64"
           <<: *image_defaults
       # If things break, delete the OnMetal host.
-      - run:
-          <<: *destroy_device
-          when: on_fail
+#      - run:
+#          <<: *destroy_device
+#          when: on_fail
 
   # Destroy the created Rackspce OnMetal host.
   destroy-metal:
