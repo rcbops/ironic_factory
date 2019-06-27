@@ -75,7 +75,7 @@
       "ssh_username": "{{ user `vm_ssh_username` }}",
       "ssh_wait_timeout": "30m",
       "type": "qemu",
-      "vm_name": "{{ user `vm_name` }}-{{ isotime \"2006-01-02\" }}.qcow2",
+      "vm_name": "{{ user `vm_name` }}",
       "vnc_bind_address": "0.0.0.0"
     },
     {

@@ -23,7 +23,7 @@
         tenant_id: "{{ lookup('env', 'RACKSPACE_TENANT_ID') }}"
         container: "Cody-Test-Ironic-Images"
         src: "{{ source_image }}"
-        dest: "{{ dest_file }}"
+        dest: "{{ dest_path }}/{{ ansible_date_time.date }}/{{ dest_file }}-{{ ansible_date_time.date }}.qcow2"
         method: put
     - name: "Update headers"
       debug:

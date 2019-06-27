@@ -8,8 +8,6 @@ _job_defaults: &job_defaults
   working_directory: ~/images
   docker:
     - image: bunchc/ironic_factory
-  environment:
-    IMAGE_DATE: "`date --iso-8601`"
 
 # Re-used in jobs to terminate the Rackspace bare-metal device
 _destroy_device: &destroy_device
@@ -45,6 +43,10 @@ commands:
         description: "Defines the source path of the image."
         type: string
         default: ""
+      dest-file:
+        description: "Defines the file name to pass to Ansible."
+        type: string
+        default: ""
       dest-path:
         description: "Defines the destination path to upload to."
         type: string
@@ -58,7 +60,8 @@ commands:
           command: |
             ansible-playbook -v -i inventory \
               --extra-vars "source_image=<< parameters.source-path >>" \
-              --extra-vars "dest_file=<< parameters.dest-path >>" \
+              --extra-vars "dest_path=<< parameters.dest-path >>" \
+              --extra-vars "dest_file=<< parameters.dest-file >>" \
               upload-image.yml
           working_directory: .circleci/ansible/
           no_output_timeout: 2h
@@ -128,10 +131,6 @@ commands:
         description: "Defines if the image should be uploaded to Cloud Files."
         type: boolean
         default: false
-      image_date:
-        description: "Allows IMAGE_DATE environment variable to be used in a command."
-        type: env_var_name
-        default: IMAGE_DATE
     steps:
         - checkout
         - attach_workspace:
@@ -155,8 +154,9 @@ commands:
             condition: << parameters.upload >>
             steps:
               - upload-cloudfiles:
-                  source-path: "/home/images/<< parameters.os >>/<< parameters.version >>/<< parameters.server >>/output/<< parameters.os >><< parameters.version >>-<< parameters.image_date >>.qcow2" 
-                  dest-path: "<< parameters.os>>/<< parameters.version >>/<< parameters.image_date >>/<< parameters.os >><< parameters.version >>-<< parameters.image_date >>.qcow2"
+                  source-path: "/home/images/<< parameters.os >>/<< parameters.version >>/<< parameters.server >>/output/<< parameters.os >><< parameters.version >>"
+                  dest-file: "<< parameteres.os >><< parameters.version >>"
+                  dest-path: "<< parameters.os>>/<< parameters.version >>/"
 
 
 jobs:
