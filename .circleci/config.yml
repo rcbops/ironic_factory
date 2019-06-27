@@ -128,6 +128,10 @@ commands:
         description: "Defines if the image should be uploaded to Cloud Files."
         type: boolean
         default: false
+      image_date:
+        description: "Allows IMAGE_DATE environment variable to be used in a command."
+        type: env_var_name
+        default: IMAGE_DATE
     steps:
         - checkout
         - attach_workspace:
@@ -149,11 +153,10 @@ commands:
             no_output_timeout: 2h
         - when:
             condition: << parameters.upload >>
-            <<: *job_defaults
             steps:
               - upload-cloudfiles:
-                  source-path: "/home/images/<< parameters.os >>/<< parameters.version >>/<< parameters.server >>/output/<< parameters.os >><< parameters.version >>-$IMAGE_DATE.qcow2" 
-                  dest-path: "<< parameters.os>>/<< parameters.version >>/$IMAGE_DATE/<< parameters.os >><< parameters.version >>-$IMAGE_DATE.qcow2"
+                  source-path: "/home/images/<< parameters.os >>/<< parameters.version >>/<< parameters.server >>/output/<< parameters.os >><< parameters.version >>-<< parameters.image_date >>.qcow2" 
+                  dest-path: "<< parameters.os>>/<< parameters.version >>/<< parameters.image_date >>/<< parameters.os >><< parameters.version >>-<< parameters.image_date >>.qcow2"
 
 
 jobs:
@@ -224,37 +227,62 @@ jobs:
       - checkout
       - attach_workspace:
           at: ~/images
+      # Alpine Build
       - runbuild:
           # Build accepting all the defaults
           os: "Alpine"
           version: "3.9"
           <<: *image_defaults
+      # CentOS Builds
       - runbuild:
-          # Build with vuln scanning enabled
           os: "CentOS"
           version: "7"
           <<: *image_defaults
-          scan: true
       - runbuild:
-          # Build with all values specified
+          os: "CentOS"
+          version: "6"
+          <<: *image_defaults
+      - runbuild:
+          os: Debian
+          version: "jessie64"
+          <<: *image_defaults
+      - runbuild:
+          os: Debian
+          version: "stretch64"
+          <<: *image_defaults
+      # Ubuntu Images
+      - runbuild:
           os: "Ubuntu"
           version: "bionic64"
-          server: "server"
-          skip-post-processors: "vagrant,vagrant-cloud,shell,manifests"
-          builders: "qemu"
-          scan: false
-          upload: true
+          <<: *image_defaults
+      - runbuild:
+          os: "Ubuntu"
+          version: "cosmic64"
+          <<: *image_defaults
+      - runbuild:
+          os: "Ubuntu"
+          version: "precise64"
+          <<: *image_defaults
+      - runbuild:
+          os: "Ubuntu"
+          version: "trusty64"
+          <<: *image_defaults
+      - runbuild:
+          os: "Ubuntu"
+          version: "xenial64"
+          <<: *image_defaults
+      # If things break, delete the OnMetal host.
       - run:
           <<: *destroy_device
           when: on_fail
 
-  # Destroy the created Packet.net bare metal device.
+  # Destroy the created Rackspce OnMetal host.
   destroy-metal:
     <<: *job_defaults
     steps:
       - checkout
       - attach_workspace:
-          at: ~/ova
+          at: ~/images
       - run:
           <<: *destroy_device
           name: Destroy bare-metal device
