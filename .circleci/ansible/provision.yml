@@ -230,7 +230,7 @@
     - role: ansible-change-hostname
     - role: ansible-etc-hosts
     - role: ansible-timezone
-    #- role: ansible-hardening
+    - role: ansible-hardening
     - role: ansible-kvm
     - role: ansible-packer
     - role: ansible-role-vagrant
