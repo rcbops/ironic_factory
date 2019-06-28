@@ -242,6 +242,8 @@
   strategy: free
   vars:
     security_sshd_permit_root_login: yes
+    security_sshd_client_alive_count_max: 720
+    security_sshd_client_alive_interval: 120
   roles:
     - role: ansible-change-hostname
     - role: ansible-etc-hosts
