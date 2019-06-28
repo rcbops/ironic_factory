@@ -228,7 +228,7 @@
   become_method: sudo
   strategy: free
   vars:
-    security_sshd_permit_root_login: no
+    security_sshd_permit_root_login: yes
   roles:
     - role: ansible-change-hostname
     - role: ansible-etc-hosts
