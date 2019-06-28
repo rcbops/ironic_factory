@@ -209,7 +209,11 @@ jobs:
           no_output_timeout: 1h
       - run:
           name: Sync git workspace to metal server
-          command: rsync -avz -e 'ssh -o StrictHostKeyChecking=no' . root@metal:/virtual_machines/images/
+          command: |
+            while ! rsync -avz -e 'ssh -o StrictHostKeyChecking=no' . root@metal:/virtual_machines/images/;do
+              echo "rsync failed. Waiting 30s"
+              sleep 30
+              echo "Trying again"; done
           environment:
             HOSTALIASES: .circleci/ansible/.hosts
           no_output_timeout: 20m
