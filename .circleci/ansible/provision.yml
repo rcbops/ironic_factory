@@ -219,9 +219,16 @@
       become: true
       when: ansible_os_family != "Windows"
 
+    # Find out which disks are the > 1T NVMe
+    - name: Get drives > 1TiB
+      set_fact:
+        zpool_disks: "{{ item.key }}"
+      with_dict: "{{ ansible_devices }}"
+      when: "{{ 'TB' in item.value.size }}"
+    
     # Setup ZFS pool on data disks for packer builds
-    - name: Create a zfs pool on /dev/sdc and /dev/sdd
-      command: zpool create -f virtual_machines {{ disks | join (' ') }}
+    - name: Create a zfs pool on the > 1TiB disks
+      command: zpool create -f virtual_machines /dev/{{ zpool_disks | join (' /dev/') }}
 
 - hosts: all
   become: true
