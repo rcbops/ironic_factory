@@ -24,7 +24,7 @@
         region: "{{ lookup('env', 'RACKSPACE_REGION') }}"
         tenant_id: "{{ lookup('env', 'RACKSPACE_TENANT_ID') }}"
         container: "Cody-Test-Ironic-Images"
-        src: "{{ source_image }}/{{ dest_file|lower }}.qcow2"
+        src: "{{ source_image }}/{{ dest_file|lower }}"
         dest: "{{ dest_path }}/{{ ansible_date_time.date }}/{{ dest_file|lower }}-{{ ansible_date_time.date }}.qcow2"
         method: put
     # Create a blank file to be used as a pointer to the image
