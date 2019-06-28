@@ -5,5 +5,5 @@
   "iso_url": "http://archive.kernel.org/centos-vault/5.11/isos/x86_64/CentOS-5.11-x86_64-bin-DVD-1of2.iso",
   "iso_checksum_url": "http://archive.kernel.org/centos-vault/5.11/isos/x86_64/sha256sum.txt",
   "kickstart_cfg": "ks.5.cfg",
-  "vm_name": "centos5"
+  "vm_name": "centos-5"
 }
