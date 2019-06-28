@@ -229,6 +229,12 @@
     # Setup ZFS pool on data disks for packer builds
     - name: Create a zfs pool on the > 1TiB disks
       command: zpool create -f virtual_machines /dev/{{ zpool_disks | join (' /dev/') }}
+
+    # Do some ZFS wizardry so the pool survives reboots
+    - name: Export ZFS volume
+      command: zpool export virtual_machines
+    - name: Import ZFS volume by-id
+      command: zpool import -d /dev/disk/by-id -aN
     
     # Create packer tempdir on NVMe
     - name: Create packer tempdir on NVMe
@@ -252,3 +258,4 @@
     - role: ansible-kvm
     - role: ansible-packer
     - role: ansible-role-vagrant
+:q
