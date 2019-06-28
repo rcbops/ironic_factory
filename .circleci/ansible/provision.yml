@@ -229,6 +229,12 @@
     # Setup ZFS pool on data disks for packer builds
     - name: Create a zfs pool on the > 1TiB disks
       command: zpool create -f virtual_machines /dev/{{ zpool_disks | join (' /dev/') }}
+    
+    # Create packer tempdir on NVMe
+    - name: Create packer tempdir on NVMe
+      file:
+        path: /virtual_machines/tmp/
+        state: directory
 
 - hosts: all
   become: true
