@@ -4,5 +4,5 @@
   "iso_checksum_type": "sha256",
   "iso_url": "https://cdimage.debian.org/cdimage/archive/8.11.0/amd64/iso-cd/debian-8.11.0-amd64-netinst.iso",
   "iso_checksum_url": "https://cdimage.debian.org/cdimage/archive/8.11.0/amd64/iso-cd/SHA256SUMS",
-  "vm_name": "jessie64.qcow2"
+  "vm_name": "jessie64"
 }
