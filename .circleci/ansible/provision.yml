@@ -235,6 +235,8 @@
       command: zpool export virtual_machines
     - name: Import ZFS volume by-id
       command: zpool import -d /dev/disk/by-id -aN
+    - name: Mount ZFS volume
+      command: zfs mount -a
     
     # Create packer tempdir on NVMe
     - name: Create packer tempdir on NVMe
