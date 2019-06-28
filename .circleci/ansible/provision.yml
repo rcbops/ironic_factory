@@ -258,4 +258,3 @@
     - role: ansible-kvm
     - role: ansible-packer
     - role: ansible-role-vagrant
-:q
