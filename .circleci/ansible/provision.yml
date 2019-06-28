@@ -225,8 +225,6 @@
         zpool_disks: "{{ zpool_disks|default([]) + [ item.key ] }}"
       with_dict: "{{ ansible_devices }}"
       when: "{{ 'TB' in item.value.size }}"
-    
-    - name: 
 
     # Setup ZFS pool on data disks for packer builds
     - name: Create a zfs pool on the > 1TiB disks
