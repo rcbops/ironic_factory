@@ -144,7 +144,7 @@ commands:
                 --extra-vars "build_os=<< parameters.os >>" \
                 --extra-vars "build_version=<< parameters.version >>" \
                 --extra-vars "build_type=<< parameters.server >>" \
-                --extra-vars "skip_post_processors=/virtual_machines/images/<< parameters.skip-post-processors >>" \
+                --extra-vars "skip_post_processors=<< parameters.skip-post-processors >>" \
                 --extra-vars "box_info_path=box_info.json" \
                 --extra-vars "template_path=template.json" \
                 run-packer.yml
@@ -222,9 +222,9 @@ jobs:
           paths:
             - .circleci/ansible/.hosts
             - .circleci/ansible/inventory
-      - run:
-          <<: *destroy_device
-          when: on_fail
+#      - run:
+#          <<: *destroy_device
+#          when: on_fail
 
   # Run packer builds
   run-builds:
@@ -277,9 +277,9 @@ jobs:
           version: "xenial64"
           <<: *image_defaults
       # If things break, delete the OnMetal host.
-      - run:
-          <<: *destroy_device
-          when: on_fail
+#      - run:
+#          <<: *destroy_device
+#          when: on_fail
 
   # Destroy the created Rackspce OnMetal host.
   destroy-metal:
