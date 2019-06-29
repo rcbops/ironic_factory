@@ -222,9 +222,9 @@ jobs:
           paths:
             - .circleci/ansible/.hosts
             - .circleci/ansible/inventory
-#      - run:
-#          <<: *destroy_device
-#          when: on_fail
+      - run:
+          <<: *destroy_device
+          when: on_fail
 
   # Run packer builds
   run-builds:
@@ -277,9 +277,9 @@ jobs:
           version: "xenial64"
           <<: *image_defaults
       # If things break, delete the OnMetal host.
-#      - run:
-#          <<: *destroy_device
-#          when: on_fail
+      - run:
+          <<: *destroy_device
+          when: on_fail
 
   # Destroy the created Rackspce OnMetal host.
   destroy-metal:
@@ -319,13 +319,13 @@ workflows:
               - master
   # Run the builds on a schedule
   build-and-test:
-#    triggers:
-#      - schedule:
-#          cron: "15 03 1,15 * *"
-#          filters:
-#            branches:
-#              only:
-#                - master
+    triggers:
+      - schedule:
+          cron: "15 03 1,15 * *"
+          filters:
+            branches:
+              only:
+                - master
     jobs:
 #      - validate-upstream:
 #          filters:
