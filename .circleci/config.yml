@@ -317,8 +317,46 @@ workflows:
             branches:
               only:
               - master
+
+  # Run the builds on commit
+  build:
+    jobs:
+#      - validate-upstream:
+#          filters:
+#            branches:
+#              only:
+#                - master
+      - create-metal:
+#          requires:
+#            - validate-upstream
+          filters:
+            branches:
+              only:
+                - master
+      - provision-metal:
+          requires:
+            - create-metal
+          filters:
+            branches:
+              only:
+                - master
+      - run-builds:
+          requires:
+            - provision-metal
+          filters:
+            branches:
+              only:
+                - master
+      - destroy-metal:
+          requires:
+            - run-builds
+          filters:
+            branches:
+              only:
+                - master
+
   # Run the builds on a schedule
-  build-and-test:
+  scheduled-build:
     triggers:
       - schedule:
           cron: "15 03 1,15 * *"
