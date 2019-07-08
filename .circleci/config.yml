@@ -156,7 +156,7 @@ commands:
               - upload-cloudfiles:
                   source-path: "/virtual_machines/images/<< parameters.os >>/<< parameters.version >>/<< parameters.server >>/output"
                   dest-file: "<< parameters.os >>-<< parameters.version >>"
-                  dest-path: "<< parameters.os >>/<< parameters.version >>/"
+                  dest-path: "<< parameters.os >>/<< parameters.version >>"
 
 
 jobs:
