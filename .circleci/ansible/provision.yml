@@ -227,6 +227,22 @@
       with_dict: "{{ ansible_devices }}"
       when: "{{ 'TB' in item.value.size }}"
 
+    # Nuke old partitions on those disks
+    - name: Read partitions from > 1TiB disks
+      parted:
+        device: "/dev/disk/by-id/{{ item }}"
+        unit: MiB
+      register: disk_info
+    - name: print disk_info
+      debug:
+        msg: "{{ disk_info }}"
+    - name: Nuke those partitions
+      parted:
+        device: "{{ item.0.disk.dev }}"
+        number: "{{ item.1.num }}"
+        state: absent
+      loop: "{{ disk_info.results|subelemets('partitions') }}"
+
     # Setup ZFS pool on data disks for packer builds
     - name: Create a zfs pool on the > 1TiB disks
       command: zpool create -f virtual_machines /dev/disk/by-id/{{ zpool_disks | join (' /dev/disk/by-id/') }}
