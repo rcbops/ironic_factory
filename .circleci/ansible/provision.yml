@@ -232,6 +232,7 @@
       parted:
         device: "/dev/disk/by-id/{{ item }}"
         unit: MiB
+      with_items: "{{ zpool_disks }}"
       register: disk_info
     - name: print disk_info
       debug:
