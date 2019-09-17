@@ -242,7 +242,7 @@
         device: "{{ item.0.disk.dev }}"
         number: "{{ item.1.num }}"
         state: absent
-      loop: "{{ disk_info.results|subelemets('partitions') }}"
+      loop: "{{ disk_info.results|subelements('partitions') }}"
 
     # Setup ZFS pool on data disks for packer builds
     - name: Create a zfs pool on the > 1TiB disks
