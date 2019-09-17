@@ -162,6 +162,8 @@ if [[ $os_family = "Debian" || $os = "Debian" ]]; then
         echo -e "http://dl-cdn.alpinelinux.org/alpine/edge/testing\nhttp://dl-cdn.alpinelinux.org/alpine/edge/main" | tee -a /etc/apk/repositories
         apk upgrade --update-cache
         apk add --update-cache python python-dev openssl-dev libffi-dev alpine-sdk linux-headers build-base || true
+        # Upgrade facter for new ruby
+        gem install facter || true
         # Uncomment the following line to install ironic-python-agent
         #install_ironic-agent
         apk add --update-cache cloud-init
