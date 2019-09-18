@@ -219,6 +219,23 @@
       become: true
       when: ansible_os_family != "Windows"
 
+- hosts: all
+  become: true
+  become_method: sudo
+  strategy: free
+  vars:
+    security_sshd_permit_root_login: yes
+    security_sshd_client_alive_count_max: 720
+    security_sshd_client_alive_interval: 120
+  roles:
+    - role: ansible-change-hostname
+    - role: ansible-etc-hosts
+    - role: ansible-timezone
+    - role: ansible-hardening
+    - role: ansible-kvm
+    - role: ansible-packer
+    - role: ansible-role-vagrant
+  tasks:
     # Find out which disks are the > 1T NVMe
     - name: Get drives > 1TiB
       set_fact:
@@ -265,20 +282,3 @@
       file:
         path: /virtual_machines/tmp/
         state: directory
-
-- hosts: all
-  become: true
-  become_method: sudo
-  strategy: free
-  vars:
-    security_sshd_permit_root_login: yes
-    security_sshd_client_alive_count_max: 720
-    security_sshd_client_alive_interval: 120
-  roles:
-    - role: ansible-change-hostname
-    - role: ansible-etc-hosts
-    - role: ansible-timezone
-    - role: ansible-hardening
-    - role: ansible-kvm
-    - role: ansible-packer
-    - role: ansible-role-vagrant
