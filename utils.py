@@ -11,7 +11,11 @@ import subprocess
 import sys
 import requests
 import git
-from urllib.parse import urlparse
+try:
+    from urllib.parse import urlparse
+except:
+    from urlparse import urlparse
+
 from difflib import get_close_matches
 from multiprocessing import Pool, cpu_count, TimeoutError
 from requests_toolbelt.multipart import encoder
