@@ -321,14 +321,14 @@ workflows:
   # Run the builds on commit
   build:
     jobs:
-#      - validate-upstream:
-#          filters:
-#            branches:
-#              only:
-#                - master
+      - validate-upstream:
+          filters:
+            branches:
+              only:
+                - master
       - create-metal:
-#          requires:
-#            - validate-upstream
+          requires:
+            - validate-upstream
           filters:
             branches:
               only:
