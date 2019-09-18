@@ -11,7 +11,7 @@ import subprocess
 import sys
 import requests
 import git
-from urlparse import urlparse
+from urllib.parse import urlparse
 from difflib import get_close_matches
 from multiprocessing import Pool, cpu_count, TimeoutError
 from requests_toolbelt.multipart import encoder
@@ -210,7 +210,7 @@ def gotta_go_fast(username, vagrant_cloud_token):
                 if auto_build and build_image:
                     builds.append(root + '/build.sh')
                     os.chdir(SCRIPT_DIR)
-    
+
     pool.map(go_fast, builds, chunksize = 1)
 
 
@@ -303,10 +303,10 @@ def check_iso(boxes, vagrant_cloud_token):
                 data = json.load(box_info)
                 url = data['iso_url']
                 response = requests.head(url)
-                if response.status_code != 200:
-                    print("Invalid URL: %s" %(url))
-                else:
+                if response.status_code == 200 or response.status_code == 302:
                     print("Valid URL: %s" %(url))
+                else:
+                    print("Invalid URL: %s" %(url))
 
 
 def check_sha(boxes, vagrant_cloud_token):
@@ -354,7 +354,7 @@ def update_templates():
                     else:
                         remote_filename = local_filename
 
-                    # Check if the local checksum matches the remote checksum                   
+                    # Check if the local checksum matches the remote checksum
                     if checksum not in remote_checksums.text:
                         print("Checksum mismatch")
                         checksum = filter(lambda x: remote_filename[0] in x, remote_checksums.iter_lines())[0].split()[0]
@@ -588,7 +588,7 @@ def upload_box(box_tag, box_path, box_version, box_provider_name,
     Remote path: {1}
     Upload command: {2}
     """.format(box_path, upload_path, upload_cmd))
-    
+
     process = subprocess.Popen(upload_cmd.split())
     process.wait()
     if process.returncode != 0:
