@@ -1,9 +1,0 @@
-{
-  "arch_version": "2019.05.01",
-  "boot_command_prefix": "",
-  "iso_checksum": "a86b13e041996942529cd7d51405a87ffbb36caa",
-  "iso_checksum_type": "sha1",
-  "iso_url": "https://arch.mirror.constant.com/iso/2019.05.02/archlinux-2019.05.02-x86_64.iso",
-  "iso_checksum_url": "https://arch.mirror.constant.com/iso/2019.05.02/sha1sums.txt",
-  "vm_name": "arch-20190502"
-}
