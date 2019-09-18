@@ -39,6 +39,12 @@ def main():
     args = parse_args()
     if args.action == 'cleanup_builds':
         cleanup_builds()
+    elif args.action == 'check_iso':
+        check_iso()
+    elif args.action == 'check_sha':
+        check_sha()
+    elif args.action == 'update_templates':
+        update_templates()
     else:
         username, vagrant_cloud_token = private_vars()
         decide_action(args, username, vagrant_cloud_token)
@@ -70,7 +76,7 @@ def parse_args():
             'build_all', 'gotta_go_fast', 'change_controller',
             'cleanup_builds', 'commit_manifests', 'get_boxes',
             'rename_templates', 'repo_info', 'upload_boxes',
-            'view_manifests', 'create_all', 'check_iso',
+            'view_manifests', 'create_all', 'check_iso', 'check_sha',
             'update_templates'])
     parser.add_argument('--controller',
                         help='Define hard drive controller type',
@@ -112,7 +118,7 @@ def decide_action(args, username, vagrant_cloud_token):
     elif args.action == "create_all":
         create_all(username, vagrant_cloud_token)
     elif args.action == "check_iso":
-        check_iso(username, vagrant_cloud_token)
+        check_iso()
     elif args.action == "update_templates":
         update_templates()
     elif args.action == 'view_manifests':
@@ -297,9 +303,8 @@ def create_all(username, vagrant_cloud_token):
                     get_box(box_info, username, vagrant_cloud_token)
 
 
-def check_iso(boxes, vagrant_cloud_token):
+def check_iso():
     """Looks in template.json in each directory and validates the ISO is accessible."""
-    box_api_url = API_URL + 'box/'
     for root, _dirs, files in os.walk(SCRIPT_DIR):
         if 'template.json' in files:
             with open(os.path.join(root, 'template.json'),
@@ -313,22 +318,36 @@ def check_iso(boxes, vagrant_cloud_token):
                     print("Invalid URL: %s" %(url))
 
 
-def check_sha(boxes, vagrant_cloud_token):
+def check_sha():
     """Looks in template.json in each directory and validates the ISO SHA listed matches the remote SHA."""
     for root, _dirs, files in os.walk(SCRIPT_DIR):
         if 'template.json' in files:
             with open(os.path.join(root, 'template.json'),
                       'r') as box_info:
                 data = json.load(box_info)
-                sha = data['iso_checksum']
-                url = data['base_url'] + "SHA256SUMS"
-                response = requests.get(url)
-                if response.status_code != 200:
-                    print("Invalid URL: %s" %(url))
+                checksum = data['iso_checksum']
+                checksum_url = data['iso_checksum_url']
+                url = data['iso_url']
+                local_filename = os.path.basename(urlparse(url).path)
+                remote_checksums = requests.get(checksum_url)
+                if remote_checksums.status_code != 200:
+                    print("Invalid checksum URL: %s" %(url))
                 else:
-                    if sha not in response.text:
-                        print("SHA256 mismatch")
+                    # Check if the remote filename changed
+                    if local_filename not in remote_checksums.text:
+                        print("Filename mismatch: %s" %(local_filename))
+                        remote_filename = get_close_matches(local_filename, remote_checksums.text.split(), 1, 0.9)
+                        print("New filename: %s" %(remote_filename[0]))
+                        url = url.replace(local_filename, remote_filename[0])
+                        print("New URL: %s" %(url))
+                        update = True
+                    else:
+                        remote_filename = local_filename
 
+                    if checksum not in remote_checksums.text:
+                        print("SHA256 mismatch")
+                        checksum = filter(lambda x: remote_filename[0] in x, remote_checksums.iter_lines())[0].split()[0]
+                        print("New checksum: %s" %(checksum))
 
 def update_templates():
     """Checks and updates the values in template.json."""
