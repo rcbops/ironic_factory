@@ -166,6 +166,9 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Install requirements
+          command: pip install -r requirements-dev.txt -r requirements.txt
+      - run:
           name: Check ISO
           command: python utils.py check_iso
       - run:
@@ -365,14 +368,14 @@ workflows:
               only:
                 - master
     jobs:
-#      - validate-upstream:
-#          filters:
-#            branches:
-#              only:
-#                - master
+      - validate-upstream:
+          filters:
+            branches:
+              only:
+                - master
       - create-metal:
-#          requires:
-#            - validate-upstream
+          requires:
+            - validate-upstream
           filters:
             branches:
               only:
