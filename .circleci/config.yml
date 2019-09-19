@@ -232,6 +232,7 @@ jobs:
   # Run packer builds
   run-builds:
     <<: *job_defaults
+    parallelism: 4
     steps:
       - checkout
       - attach_workspace:
